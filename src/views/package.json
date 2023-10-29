@@ -1,18 +1,28 @@
 {
   "name": "arduino-manager",
   "version": "0.0.1",
+  "private": "false",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "MIT",
   "author": {
     "name": "Nikola Hristov",
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
   },
-  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "devDependencies": {
     "@types/react": "18.2.33",
     "@types/react-bootstrap": "0.32.34",
@@ -39,28 +49,17 @@
     "style-loader": "3.3.3",
     "svg-url-loader": "8.0.0",
     "ts-loader": "9.5.0",
-    "webpack": "5.89.0",
-    "typescript-esbuild": "0.3.1"
+    "typescript-esbuild": "0.3.1",
+    "webpack": "5.89.0"
   },
-  
+  "publishConfig": {
+    "access": "public"
+  },
   "overrides": {
     "qs": "~6.10.3",
     "async": "~3.2.3",
     "node-sass": "9.0.0",
     "es5-ext": "0.10.53",
     "string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
-  },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "type": "module",
-  "private": "false",
-  "publishConfig": {
-    "access": "public"
   }
 }

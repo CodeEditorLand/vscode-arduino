@@ -1,23 +1,9 @@
 {
   "name": "vscode-arduino",
   "displayName": "Arduino",
-  "description": "Arduino for Visual Studio Code",
   "version": "0.0.1",
-  "publisher": "vsciot-vscode",
-  "preview": true,
-  "engines": {
-    "vscode": "1.63.0"
-  },
-  "icon": "images/arduino.png",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-  },
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-  },
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "private": "false",
+  "description": "Arduino for Visual Studio Code",
   "categories": [
     "Programming Languages",
     "Snippets",
@@ -30,28 +16,29 @@
     "C",
     "C++"
   ],
-  "activationEvents": [
-    "workspaceContains:**/*.ino",
-    "onCommand:arduino.verify",
-    "onCommand:arduino.upload",
-    "onCommand:arduino.cliUpload",
-    "onCommand:arduino.uploadUsingProgrammer",
-    "onCommand:arduino.cliUploadUsingProgrammer",
-    "onCommand:arduino.rebuildIntelliSenseConfig",
-    "onCommand:arduino.selectProgrammer",
-    "onCommand:arduino.selectSerialPort",
-    "onCommand:arduino.selectSketch",
-    "onCommand:arduino.openSerialMonitor",
-    "onCommand:arduino.changeTimestampFormat",
-    "onCommand:arduino.closeSerialMonitor",
-    "onCommand:arduino.changeBoardType",
-    "onCommand:arduino.showBoardConfig",
-    "onCommand:arduino.showBoardManager",
-    "onCommand:arduino.showLibraryManager",
-    "onCommand:arduino.showExamples",
-    "onCommand:arduino.initialize"
-  ],
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "publisher": "vsciot-vscode",
+  "type": "module",
   "main": "./out/src/extension",
+  "scripts": {
+    "build": "gulp build --mode=production",
+    "postinstall": "node ./build/downloadAssets.js && cd ./src/views && npm install",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts",
+    "test": "gulp test"
+  },
   "contributes": {
     "breakpoints": [
       {
@@ -59,16 +46,6 @@
       },
       {
         "language": "cpp"
-      }
-    ],
-    "snippets": [
-      {
-        "language": "cpp",
-        "path": "./snippets/arduino.json"
-      },
-      {
-        "language": "c",
-        "path": "./snippets/arduino.json"
       }
     ],
     "commands": [
@@ -157,52 +134,6 @@
         "title": "Arduino: Examples"
       }
     ],
-    "menus": {
-      "editor/title": [
-        {
-          "when": "resourceExtname == .ino",
-          "command": "arduino.verify",
-          "group": "navigation"
-        },
-        {
-          "when": "resourceExtname == .ino",
-          "command": "arduino.upload",
-          "group": "navigation"
-        }
-      ]
-    },
-    "views": {
-      "explorer": [
-        {
-          "id": "arduinoExampleExplorer",
-          "name": "Arduino Examples",
-          "when": "vscode-arduino:showExampleExplorer"
-        }
-      ]
-    },
-    "viewsWelcome": [
-      {
-        "view": "arduinoExampleExplorer",
-        "contents": "No examples are installed. [Find additional examples online.](https://go.microsoft.com/fwlink/?linkid=2225276)"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "arduino.verify",
-        "key": "ctrl+alt+r",
-        "mac": "cmd+alt+r"
-      },
-      {
-        "command": "arduino.upload",
-        "key": "ctrl+alt+u",
-        "mac": "cmd+alt+u"
-      },
-      {
-        "command": "arduino.rebuildIntelliSenseConfig",
-        "key": "ctrl+alt+i",
-        "mac": "cmd+alt+i"
-      }
-    ],
     "configuration": {
       "type": "object",
       "title": "Arduino configuration",
@@ -289,20 +220,6 @@
         "editor.quickSuggestions": true
       }
     },
-    "languages": [
-      {
-        "id": "arduino-output",
-        "mimetypes": [
-          "text/x-code-output"
-        ]
-      },
-      {
-        "id": "cpp",
-        "extensions": [
-          ".ino"
-        ]
-      }
-    ],
     "grammars": [
       {
         "language": "cpp",
@@ -320,18 +237,117 @@
         "fileMatch": "arduino.json",
         "url": "./misc/arduinoValidator.json"
       }
+    ],
+    "keybindings": [
+      {
+        "command": "arduino.verify",
+        "key": "ctrl+alt+r",
+        "mac": "cmd+alt+r"
+      },
+      {
+        "command": "arduino.upload",
+        "key": "ctrl+alt+u",
+        "mac": "cmd+alt+u"
+      },
+      {
+        "command": "arduino.rebuildIntelliSenseConfig",
+        "key": "ctrl+alt+i",
+        "mac": "cmd+alt+i"
+      }
+    ],
+    "languages": [
+      {
+        "id": "arduino-output",
+        "mimetypes": [
+          "text/x-code-output"
+        ]
+      },
+      {
+        "id": "cpp",
+        "extensions": [
+          ".ino"
+        ]
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceExtname == .ino",
+          "command": "arduino.verify",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceExtname == .ino",
+          "command": "arduino.upload",
+          "group": "navigation"
+        }
+      ]
+    },
+    "snippets": [
+      {
+        "language": "cpp",
+        "path": "./snippets/arduino.json"
+      },
+      {
+        "language": "c",
+        "path": "./snippets/arduino.json"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "arduinoExampleExplorer",
+          "name": "Arduino Examples",
+          "when": "vscode-arduino:showExampleExplorer"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "arduinoExampleExplorer",
+        "contents": "No examples are installed. [Find additional examples online.](https://go.microsoft.com/fwlink/?linkid=2225276)"
+      }
     ]
   },
-  "scripts": {
-    "build": "gulp build --mode=production",
-    "postinstall": "node ./build/downloadAssets.js && cd ./src/views && npm install",
-    "test": "gulp test",
-    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
-  },
-  "extensionDependencies": [
-    "ms-vscode.cpptools",
-    "ms-vscode.vscode-serial-monitor"
+  "activationEvents": [
+    "workspaceContains:**/*.ino",
+    "onCommand:arduino.verify",
+    "onCommand:arduino.upload",
+    "onCommand:arduino.cliUpload",
+    "onCommand:arduino.uploadUsingProgrammer",
+    "onCommand:arduino.cliUploadUsingProgrammer",
+    "onCommand:arduino.rebuildIntelliSenseConfig",
+    "onCommand:arduino.selectProgrammer",
+    "onCommand:arduino.selectSerialPort",
+    "onCommand:arduino.selectSketch",
+    "onCommand:arduino.openSerialMonitor",
+    "onCommand:arduino.changeTimestampFormat",
+    "onCommand:arduino.closeSerialMonitor",
+    "onCommand:arduino.changeBoardType",
+    "onCommand:arduino.showBoardConfig",
+    "onCommand:arduino.showBoardManager",
+    "onCommand:arduino.showLibraryManager",
+    "onCommand:arduino.showExamples",
+    "onCommand:arduino.initialize"
   ],
+  "dependencies": {
+    "@microsoft/vscode-serial-monitor-api": "0.1.7",
+    "@vscode/extension-telemetry": "~0.8.5",
+    "body-parser": "1.20.2",
+    "cocopa": "0.0.14",
+    "eventemitter2": "6.4.9",
+    "express": "4.18.2",
+    "extract-zip": "2.0.1",
+    "glob": "10.3.10",
+    "iconv-lite": "0.6.3",
+    "impor": "0.1.1",
+    "properties": "1.2.1",
+    "strftime": "0.10.2",
+    "usb-detection": "4.14.2",
+    "uuid": "9.0.1",
+    "winreg": "1.2.5",
+    "winston": "3.11.0"
+  },
   "devDependencies": {
     "@babel/core": "7.23.2",
     "@babel/preset-env": "7.23.2",
@@ -371,28 +387,22 @@
     "tslint": "5.20.1",
     "typemoq": "2.1.0",
     "typescript": "5.2.2",
+    "typescript-esbuild": "0.3.1",
     "vscode-test": "1.4.0",
-    "webpack": "5.89.0",
-    "typescript-esbuild": "0.3.1"
+    "webpack": "5.89.0"
   },
-  "dependencies": {
-    "@microsoft/vscode-serial-monitor-api": "0.1.7",
-    "@vscode/extension-telemetry": "~0.8.5",
-    "body-parser": "1.20.2",
-    "cocopa": "0.0.14",
-    "eventemitter2": "6.4.9",
-    "express": "4.18.2",
-    "extract-zip": "2.0.1",
-    "glob": "10.3.10",
-    "iconv-lite": "0.6.3",
-    "impor": "0.1.1",
-    "properties": "1.2.1",
-    "strftime": "0.10.2",
-    "usb-detection": "4.14.2",
-    "uuid": "9.0.1",
-    "winreg": "1.2.5",
-    "winston": "3.11.0"
+  "extensionDependencies": [
+    "ms-vscode.cpptools",
+    "ms-vscode.vscode-serial-monitor"
+  ],
+  "engines": {
+    "vscode": "1.63.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "icon": "images/arduino.png",
+  "preview": true,
   "overrides": {
     "async": "~3.2.3",
     "node-sass": "7.0.0",
@@ -401,15 +411,5 @@
   },
   "vsce": {
     "ignoreFile": "out/.vscodeignore"
-  },
-  "type": "module",
-  "private": "false",
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
   }
 }
