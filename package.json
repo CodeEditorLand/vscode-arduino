@@ -2,22 +2,22 @@
   "name": "vscode-arduino",
   "displayName": "Arduino",
   "description": "Arduino for Visual Studio Code",
-  "version": "0.6.0",
+  "version": "0.0.1",
   "publisher": "vsciot-vscode",
   "preview": true,
   "engines": {
     "vscode": "1.63.0"
   },
   "icon": "images/arduino.png",
-  "license": "SEE LICENSE IN LICENSE.txt",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/vscode-arduino.git"
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
   },
   "bugs": {
-    "url": "https://github.com/Microsoft/vscode-arduino/issues"
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
   },
-  "homepage": "https://github.com/Microsoft/vscode-arduino",
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
   "categories": [
     "Programming Languages",
     "Snippets",
@@ -325,7 +325,8 @@
   "scripts": {
     "build": "gulp build --mode=production",
     "postinstall": "node ./build/downloadAssets.js && cd ./src/views && npm install",
-    "test": "gulp test"
+    "test": "gulp test",
+    "prepublishOnly": "TypeScriptESBuild Source/**/*.ts"
   },
   "extensionDependencies": [
     "ms-vscode.cpptools",
@@ -371,7 +372,8 @@
     "typemoq": "2.1.0",
     "typescript": "5.2.2",
     "vscode-test": "1.4.0",
-    "webpack": "5.89.0"
+    "webpack": "5.89.0",
+    "typescript-esbuild": "0.3.1"
   },
   "dependencies": {
     "@microsoft/vscode-serial-monitor-api": "0.1.7",
@@ -399,5 +401,15 @@
   },
   "vsce": {
     "ignoreFile": "out/.vscodeignore"
+  },
+  "type": "module",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
   }
 }
