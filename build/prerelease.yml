@@ -8,35 +8,37 @@ name: $(Date:yyMMdd)$(Rev:rrr)
 trigger: none
 pr: none
 schedules:
-  - cron: "0 2 * * *"
-    displayName: Daily 2 AM
-    branches:
-      include:
-        - main
+    - cron: "0 2 * * *"
+      displayName: Daily 2 AM
+      branches:
+          include:
+              - main
 
 variables:
-  SignType: real
+    SignType: real
 
 jobs:
-  - template: ./build.yml
-    parameters:
-      prerelease: true
-  - job: PublishExtensions
-    displayName: Publish extensions
-    dependsOn: Build
-    pool:
-      name: "AzurePipelines-EO"
-    steps:
-      - checkout: none
-      - download: current
-        artifact: extension-vsixes
-      - task: NodeTool@0
-        displayName: Use Node 16.x
-        inputs:
-          versionSpec: 16.x
-      - script: npm install --global @vscode/vsce
-        displayName: Install vsce
-      - script: for f in $(Pipeline.Workspace)/extension-vsixes/*.vsix; do vsce publish --packagePath $f; done
-        displayName: Publish vscode-arduino
-        env:
-          VSCE_PAT: $(vscePat)
+    - template: ./build.yml
+      parameters:
+          prerelease: true
+    - job: PublishExtensions
+      displayName: Publish extensions
+      dependsOn: Build
+      pool:
+          name: "AzurePipelines-EO"
+      steps:
+          - checkout: none
+          - download: current
+            artifact: extension-vsixes
+          - task: NodeTool@0
+            displayName: Use Node 16.x
+            inputs:
+                versionSpec: 16.x
+          - script: npm install --global @vscode/vsce
+            displayName: Install vsce
+          - script:
+                for f in $(Pipeline.Workspace)/extension-vsixes/*.vsix; do vsce
+                publish --packagePath $f; done
+            displayName: Publish vscode-arduino
+            env:
+                VSCE_PAT: $(vscePat)

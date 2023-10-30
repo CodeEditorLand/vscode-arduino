@@ -8,10 +8,10 @@ import exampleReducer from "./exampleReducer";
 import libraryManagerReducer from "./libraryManagerReducer";
 
 const rootReducer = combineReducers({
-    boardManagerStore: boardManagerReducer,
-    boardConfigStore: boardConfigReducer,
-    exampleStore: exampleReducer,
-    libraryManagerStore: libraryManagerReducer,
+	boardManagerStore: boardManagerReducer,
+	boardConfigStore: boardConfigReducer,
+	exampleStore: exampleReducer,
+	libraryManagerStore: libraryManagerReducer,
 });
 
 export default rootReducer;

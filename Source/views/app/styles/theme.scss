@@ -2,40 +2,40 @@
 $vscode-dark-bgcolor-hover: #333;
 $vscode-dark-border-color: #505050;
 .vscode-dark {
-    .theme-listitem {
-        border: 1px double $vscode-dark-border-color;
+	.theme-listitem {
+		border: 1px double $vscode-dark-border-color;
 
-        &:hover {
-            background-color: $vscode-dark-bgcolor-hover;
-        }
-    }
+		&:hover {
+			background-color: $vscode-dark-bgcolor-hover;
+		}
+	}
 
-    .rc-tree {
-        .rc-tree-node-content-wrapper {
-            &:hover {
-                background-color: #4a4848;
-            }
-        }
-    }
+	.rc-tree {
+		.rc-tree-node-content-wrapper {
+			&:hover {
+				background-color: #4a4848;
+			}
+		}
+	}
 }
 
 // vscode-light styles
 $vscode-light-bgcolor-hover: #e9f3f5;
 $vscode-light-border-color: #505050;
 .vscode-light {
-    .theme-listitem {
-        border: 1px double $vscode-light-border-color;
+	.theme-listitem {
+		border: 1px double $vscode-light-border-color;
 
-        &:hover {
-            background-color: $vscode-light-bgcolor-hover;
-        }
-    }
+		&:hover {
+			background-color: $vscode-light-bgcolor-hover;
+		}
+	}
 
-    .rc-tree {
-        .rc-tree-node-content-wrapper {
-            &:hover {
-                background-color: $vscode-light-bgcolor-hover;
-            }
-        }
-    }
+	.rc-tree {
+		.rc-tree-node-content-wrapper {
+			&:hover {
+				background-color: $vscode-light-bgcolor-hover;
+			}
+		}
+	}
 }
