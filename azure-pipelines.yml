@@ -4,42 +4,38 @@
 name: $(Date:yyyyMMdd)$(Rev:.r).0-$(SourceBranchName)
 
 parameters:
-    - name: SignTypeOverride
-      displayName: Signing type override
-      type: string
-      default: default
-      values:
-          - default
-          - test
-          - real
+  - name: SignTypeOverride
+    displayName: Signing type override
+    type: string
+    default: default
+    values:
+      - default
+      - test
+      - real
 
 pr:
-    - main
+  - main
 
 trigger:
-    branches:
-        include:
-            - main
-    tags:
-        include:
-            - v*
+  branches:
+    include:
+      - main
+  tags:
+    include:
+      - v*
 
 pool:
-    name: VSEngSS-MicroBuild2019-1ES
+  name: VSEngSS-MicroBuild2019-1ES
 
 variables:
-    # If the user didn't override the signing type, then only real-sign on tags or
-    # the main branch.
-    ${{ if ne(parameters.SignTypeOverride, 'default') }}:
-        SignType: ${{ parameters.SignTypeOverride }}
-    ? ${{ if and(eq(parameters.SignTypeOverride, 'default'),
-      or(startsWith(variables['Build.SourceBranch'], 'refs/tags'),
-      eq(variables['Build.SourceBranchName'], 'main'))) }}
-    : SignType: real
-    ? ${{ if and(eq(parameters.SignTypeOverride, 'default'),
-      not(or(startsWith(variables['Build.SourceBranch'], 'refs/tags'),
-      eq(variables['Build.SourceBranchName'], 'main')))) }}
-    : SignType: test
+  # If the user didn't override the signing type, then only real-sign on tags or
+  # the main branch.
+  ${{ if ne(parameters.SignTypeOverride, 'default') }}:
+    SignType: ${{ parameters.SignTypeOverride }}
+  ${{ if and(eq(parameters.SignTypeOverride, 'default'), or(startsWith(variables['Build.SourceBranch'], 'refs/tags'), eq(variables['Build.SourceBranchName'], 'main'))) }}:
+    SignType: real
+  ${{ if and(eq(parameters.SignTypeOverride, 'default'), not(or(startsWith(variables['Build.SourceBranch'], 'refs/tags'), eq(variables['Build.SourceBranchName'], 'main')))) }}:
+    SignType: test
 
 jobs:
-    - template: build/build.yml
+  - template: build/build.yml
