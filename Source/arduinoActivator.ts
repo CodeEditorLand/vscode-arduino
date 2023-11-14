@@ -15,67 +15,49 @@ import ArduinoContext from "./arduinoContext";
 import { DeviceContext } from "./deviceContext";
 
 class ArduinoActivator {
-	public context: vscode.ExtensionContext;
-	private _initializePromise: Promise<void>;
-	public async activate() {
-		if (this._initializePromise) {
-			await this._initializePromise;
-			return;
-		}
+    public context: vscode.ExtensionContext;
+    private _initializePromise: Promise<void>;
+    public async activate() {
+        if (this._initializePromise) {
+            await this._initializePromise;
+            return;
+        }
 
-		this._initializePromise = (async () => {
-			const arduinoSettings = new ArduinoSettings(this.context);
-			await arduinoSettings.initialize();
-			const arduinoApp = new ArduinoApp(arduinoSettings);
+        this._initializePromise = (async () => {
+            const arduinoSettings = new ArduinoSettings(this.context);
+            await arduinoSettings.initialize();
+            const arduinoApp = new ArduinoApp(arduinoSettings);
 
-			// Initializing the app before the device context will cause a
-			// setting changed event that triggers analysis.
-			const analyzeOnOpen = VscodeSettings.getInstance().analyzeOnOpen;
-			if (analyzeOnOpen) {
-				await arduinoApp.initialize();
-			}
+            // Initializing the app before the device context will cause a
+            // setting changed event that triggers analysis.
+            const analyzeOnOpen = VscodeSettings.getInstance().analyzeOnOpen;
+            if (analyzeOnOpen) {
+                await arduinoApp.initialize();
+            }
 
-			// TODO: After use the device.json config, should remove the dependency on the ArduinoApp object.
-			const deviceContext = DeviceContext.getInstance();
-			await deviceContext.loadContext();
+            // TODO: After use the device.json config, should remove the dependency on the ArduinoApp object.
+            const deviceContext = DeviceContext.getInstance();
+            await deviceContext.loadContext();
 
-			if (!analyzeOnOpen) {
-				await arduinoApp.initialize();
-			}
+            if (!analyzeOnOpen) {
+                await arduinoApp.initialize();
+            }
 
-			// Show sketch status bar, and allow user to change sketch in config file
-			deviceContext.showStatusBar();
-			// Arduino board manager & library manager
-			arduinoApp.boardManager = new BoardManager(
-				arduinoSettings,
-				arduinoApp
-			);
-			ArduinoContext.boardManager = arduinoApp.boardManager;
-			await arduinoApp.boardManager.loadPackages();
-			arduinoApp.libraryManager = new LibraryManager(
-				arduinoSettings,
-				arduinoApp
-			);
-			arduinoApp.exampleManager = new ExampleManager(
-				arduinoSettings,
-				arduinoApp
-			);
-			arduinoApp.programmerManager = new ProgrammerManager(
-				arduinoSettings,
-				arduinoApp
-			);
-			ArduinoContext.arduinoApp = arduinoApp;
+            // Show sketch status bar, and allow user to change sketch in config file
+            deviceContext.showStatusBar();
+            // Arduino board manager & library manager
+            arduinoApp.boardManager = new BoardManager(arduinoSettings, arduinoApp);
+            ArduinoContext.boardManager = arduinoApp.boardManager;
+            await arduinoApp.boardManager.loadPackages();
+            arduinoApp.libraryManager = new LibraryManager(arduinoSettings, arduinoApp);
+            arduinoApp.exampleManager = new ExampleManager(arduinoSettings, arduinoApp);
+            arduinoApp.programmerManager = new ProgrammerManager(arduinoSettings, arduinoApp);
+            ArduinoContext.arduinoApp = arduinoApp;
 
-			const exampleProvider = new ExampleProvider(
-				arduinoApp.exampleManager,
-				arduinoApp.boardManager
-			);
-			vscode.window.registerTreeDataProvider(
-				"arduinoExampleExplorer",
-				exampleProvider
-			);
-		})();
-		await this._initializePromise;
-	}
+            const exampleProvider = new ExampleProvider(arduinoApp.exampleManager, arduinoApp.boardManager);
+            vscode.window.registerTreeDataProvider("arduinoExampleExplorer", exampleProvider);
+        })();
+        await this._initializePromise;
+    }
 }
 export default new ArduinoActivator();

@@ -6,46 +6,46 @@
  * @interface
  */
 export interface IPackage {
-	/**
-	 * Package name
-	 * @property {string}
-	 */
-	name: string;
+    /**
+     * Package name
+     * @property {string}
+     */
+    name: string;
 
-	/**
-	 * Package author email
-	 * @property {string}
-	 */
-	email: string;
+    /**
+     * Package author email
+     * @property {string}
+     */
+    email: string;
 
-	/**
-	 * Package maintainer
-	 * @property {string}
-	 */
-	maintainer: string;
+    /**
+     * Package maintainer
+     * @property {string}
+     */
+    maintainer: string;
 
-	/**
-	 * Package support website URL
-	 * @property {string}
-	 */
-	websiteURL: string;
+    /**
+     * Package support website URL
+     * @property {string}
+     */
+    websiteURL: string;
 
-	/**
-	 * Help information include online link(s)
-	 * @property: {any}
-	 */
-	help: any;
+    /**
+     * Help information include online link(s)
+     * @property: {any}
+     */
+    help: any;
 
-	/**
-	 * Supported platforms that contain in this package.
-	 * @property {IPlatform[]}
-	 */
-	platforms: IPlatform[];
+    /**
+     * Supported platforms that contain in this package.
+     * @property {IPlatform[]}
+     */
+    platforms: IPlatform[];
 
-	/**
-	 * Provided tools that contain in this package.
-	 */
-	tools: Array<object>;
+    /**
+     * Provided tools that contain in this package.
+     */
+    tools: Array<object>;
 }
 
 /**
@@ -56,129 +56,129 @@ export interface IPackage {
  * @interface
  */
 export interface IPlatform {
-	/**
-	 * Platform name
-	 * @property {string}
-	 */
-	name: string;
+    /**
+     * Platform name
+     * @property {string}
+     */
+    name: string;
 
-	/**
-	 * Targeting architecture of the platform.
-	 * @property {string}
-	 */
-	architecture: string;
+    /**
+     * Targeting architecture of the platform.
+     * @property {string}
+     */
+    architecture: string;
 
-	/**
-	 * Category, can be these values: "Arduino", "Arduino Certified", "Partner", "ESP8266", ...
-	 * @property {string}
-	 */
-	category: string;
+    /**
+     * Category, can be these values: "Arduino", "Arduino Certified", "Partner", "ESP8266", ...
+     * @property {string}
+     */
+    category: string;
 
-	/**
-	 * Provide URL of the platform
-	 * @property {string}
-	 */
-	url: string;
+    /**
+     * Provide URL of the platform
+     * @property {string}
+     */
+    url: string;
 
-	/**
-	 * Whether is the default platform come with the installation.
-	 * @property {boolean}
-	 */
-	defaultPlatform?: boolean;
+    /**
+     * Whether is the default platform come with the installation.
+     * @property {boolean}
+     */
+    defaultPlatform?: boolean;
 
-	/**
-	 * The raw version when load the object from json object. This value should not be used after the
-	 * platforms information has been parsed.
-	 * @property {string}
-	 */
-	version: string;
+    /**
+     * The raw version when load the object from json object. This value should not be used after the
+     * platforms information has been parsed.
+     * @property {string}
+     */
+    version: string;
 
-	/**
-	 * All supported version fro this platform.
-	 * @property {string[]}
-	 */
-	versions: string[];
+    /**
+     * All supported version fro this platform.
+     * @property {string[]}
+     */
+    versions: string[];
 
-	/**
-	 * Installed platform on the local Arduino IDE
-	 * @property {string}
-	 */
-	installedVersion: string;
+    /**
+     * Installed platform on the local Arduino IDE
+     * @property {string}
+     */
+    installedVersion: string;
 
-	/**
-	 * Root path that contains all the files, board description under the specified version.
-	 * @property {string}
-	 */
-	rootBoardPath: string;
+    /**
+     * Root path that contains all the files, board description under the specified version.
+     * @property {string}
+     */
+    rootBoardPath: string;
 
-	/**
-	 * The board descriptor information supported by this platform.
-	 * @property {IBoard[]}
-	 */
-	boards: any[];
+    /**
+     * The board descriptor information supported by this platform.
+     * @property {IBoard[]}
+     */
+    boards: any[];
 
-	/**
-	 * Help information object include online link(s).
-	 * @property {any}
-	 */
-	help: any;
+    /**
+     * Help information object include online link(s).
+     * @property {any}
+     */
+    help: any;
 
-	/**
-	 * Parent package information
-	 * @property {IPackage}
-	 */
-	package?: IPackage;
+    /**
+     * Parent package information
+     * @property {IPackage}
+     */
+    package?: IPackage;
 
-	/**
-	 * For custom package, only package name available.
-	 * @property {packageName}
-	 */
-	packageName?: string;
+    /**
+     * For custom package, only package name available.
+     * @property {packageName}
+     */
+    packageName?: string;
 }
 
 export interface IBoardConfigOption {
-	id: string;
+    id: string;
 
-	displayName: string;
+    displayName: string;
 }
 
 export interface IBoardConfigItem {
-	displayName: string;
+    displayName: string;
 
-	id: string;
+    id: string;
 
-	selectedOption: string;
+    selectedOption: string;
 
-	options: IBoardConfigOption[];
+    options: IBoardConfigOption[];
 }
 
 /**
  * Return values of calls to IBoard.loadConfig() and IBoard.updateConfig().
  */
 export enum BoardConfigResult {
-	/**
-	 * Setting configuration value(s) was successful
-	 */
-	Success,
-	/**
-	 * Setting configuration value(s) was successful. All or some items
-	 * were already set to the requested values.
-	 */
-	SuccessNoChange,
-	/**
-	 * One or more configuration keys were invalid.
-	 */
-	InvalidConfigID,
-	/**
-	 * One or more options were invalid.
-	 */
-	InvalidOptionID,
-	/**
-	 * Can only happen when calling IBoard.loadConfig() and when
-	 * the raw configuration string did contain invalid/unparsable
-	 * elements.
-	 */
-	InvalidFormat,
+    /**
+     * Setting configuration value(s) was successful
+     */
+    Success,
+    /**
+     * Setting configuration value(s) was successful. All or some items
+     * were already set to the requested values.
+     */
+    SuccessNoChange,
+    /**
+     * One or more configuration keys were invalid.
+     */
+    InvalidConfigID,
+    /**
+     * One or more options were invalid.
+     */
+    InvalidOptionID,
+    /**
+     * Can only happen when calling IBoard.loadConfig() and when
+     * the raw configuration string did contain invalid/unparsable
+     * elements.
+     */
+    InvalidFormat,
 }
 
 /**
@@ -187,84 +187,85 @@ export enum BoardConfigResult {
  * @interface
  */
 export interface IBoard {
-	/**
-	 * Unique key that represent the board in the package:arch:alias.
-	 * @property {string}
-	 */
-	key: string;
 
-	/**
-	 * Board aliasname for Arduino compilation such as `huzzah`, `yun`
-	 * @property {string}
-	 */
-	board: string;
+    /**
+     * Unique key that represent the board in the package:arch:alias.
+     * @property {string}
+     */
+    key: string;
 
-	/**
-	 * The human readable name displayed on the Arduino IDE Boards Manager
-	 * @property {string}
-	 */
-	name?: string;
+    /**
+     * Board aliasname for Arduino compilation such as `huzzah`, `yun`
+     * @property {string}
+     */
+    board: string;
 
-	/**
-	 * Reference to the platform that contains this board.
-	 * @property {IPlatform}
-	 */
-	platform: IPlatform;
+    /**
+     * The human readable name displayed on the Arduino IDE Boards Manager
+     * @property {string}
+     */
+    name?: string;
 
-	/**
-	 * Custom configuration for the Arduino board
-	 * @property {string}
-	 */
-	customConfig: string;
+    /**
+     * Reference to the platform that contains this board.
+     * @property {IPlatform}
+     */
+    platform: IPlatform;
 
-	/**
-	 * Custom board's configuration items.
-	 * @property {IBoardConfigItem[]}
-	 */
-	configItems: IBoardConfigItem[];
+    /**
+     * Custom configuration for the Arduino board
+     * @property {string}
+     */
+    customConfig: string;
 
-	/**
-	 * Board's parameter values.
-	 */
-	addParameter(key: string, value: string): void;
+    /**
+     * Custom board's configuration items.
+     * @property {IBoardConfigItem[]}
+     */
+    configItems: IBoardConfigItem[];
 
-	/**
-	 * Get board specified build configuration.
-	 */
-	getBuildConfig(): string;
+    /**
+     * Board's parameter values.
+     */
+    addParameter(key: string, value: string): void;
 
-	/**
-	 * Load configuration from saved context.
-	 * Parses the configuration string and tries to set the individual
-	 * configuration values. It will bail out on any error.
-	 * @param {string} configString The configuration string from the
-	 * configuration file.
-	 * @returns {BoardConfigResult} Result of the operation - for more
-	 * information see documentation of BoardConfigResult.
-	 */
-	loadConfig(configString: string): BoardConfigResult;
+    /**
+     * Get board specified build configuration.
+     */
+    getBuildConfig(): string;
 
-	/**
-	 * Set configuration value.
-	 * This function makes sure, that the configuration ID and the option ID
-	 * are actually valid. It will bail out on any error
-	 * @param {string} configId The ID of the configuration value
-	 * @param {string} optionId The ID to which the option of the configuration
-	 * value should be set to.
-	 * @returns {BoardConfigResult} Result of the operation - for more
-	 * information see documentation of BoardConfigResult.
-	 */
-	updateConfig(configId: string, optionId: string): BoardConfigResult;
+    /**
+     * Load configuration from saved context.
+     * Parses the configuration string and tries to set the individual
+     * configuration values. It will bail out on any error.
+     * @param {string} configString The configuration string from the
+     * configuration file.
+     * @returns {BoardConfigResult} Result of the operation - for more
+     * information see documentation of BoardConfigResult.
+     */
+    loadConfig(configString: string): BoardConfigResult;
 
-	/**
-	 * Reset configuration to defaults and update configuration file.
-	 */
-	resetConfig();
+    /**
+     * Set configuration value.
+     * This function makes sure, that the configuration ID and the option ID
+     * are actually valid. It will bail out on any error
+     * @param {string} configId The ID of the configuration value
+     * @param {string} optionId The ID to which the option of the configuration
+     * value should be set to.
+     * @returns {BoardConfigResult} Result of the operation - for more
+     * information see documentation of BoardConfigResult.
+     */
+    updateConfig(configId: string, optionId: string): BoardConfigResult;
 
-	/**
-	 * Get the board package name
-	 */
-	getPackageName();
+    /**
+     * Reset configuration to defaults and update configuration file.
+     */
+    resetConfig();
+
+    /**
+     * Get the board package name
+     */
+    getPackageName();
 }
 
 /**
@@ -273,27 +274,27 @@ export interface IBoard {
  * @interface
  */
 export interface IProgrammer {
-	/**
-	 * Unique key that represent the programmer in the package:name.
-	 * @property {string}
-	 */
-	key: string;
+    /**
+     * Unique key that represent the programmer in the package:name.
+     * @property {string}
+     */
+    key: string;
 
-	/**
-	 * Programmer name for Arduino compilation such as `avrisp`, `atmel_ice`
-	 * @property {string}
-	 */
-	name: string;
+    /**
+     * Programmer name for Arduino compilation such as `avrisp`, `atmel_ice`
+     * @property {string}
+     */
+    name: string;
 
-	/**
-	 * The human readable name displayed in the Arduino programmer selection menu
-	 * @property {string}
-	 */
-	displayName: string;
+    /**
+     * The human readable name displayed in the Arduino programmer selection menu
+     * @property {string}
+     */
+    displayName: string;
 
-	/**
-	 * Reference to the platform that contains this board.
-	 * @prop {IPlatform}
-	 */
-	platform: IPlatform;
+    /**
+     * Reference to the platform that contains this board.
+     * @prop {IPlatform}
+     */
+    platform: IPlatform;
 }

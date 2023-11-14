@@ -15,28 +15,27 @@ import reducer from "./reducers";
 import "./styles";
 
 class App extends React.Component<{}, {}> {
-	public render() {
-		return (
-			<div>
-				<div>{this.props.children}</div>
-			</div>
-		);
-	}
+  public render() {
+    return (<div>
+        <div>
+          { this.props.children }
+        </div>
+      </div>);
+  }
 }
 
 const createStoreWithMiddleware = applyMiddleware()(createStore);
 const store = createStoreWithMiddleware(reducer);
 
 ReactDOM.render(
-	<Provider store={store}>
-		<Router history={browserHistory}>
-			<Route path="/" component={App}>
-				<Route path="boardmanager" component={BoardManager} />
-				<Route path="librarymanager" component={LibraryManager} />
-				<Route path="boardconfig" component={BoardConfig} />
-				<Route path="examples" component={ExampleTreeView} />
-			</Route>
-		</Router>
-	</Provider>,
-	document.getElementById("mainContent")
-);
+  <Provider store={store}>
+    <Router history={ browserHistory }>
+      <Route path="/" component={App}>
+        <Route path="boardmanager" component={BoardManager} />
+        <Route path="librarymanager" component={LibraryManager} />
+        <Route path="boardconfig" component={BoardConfig} />
+        <Route path="examples" component={ExampleTreeView} />
+      </Route>
+    </Router>
+  </Provider>,
+  document.getElementById("mainContent"));
