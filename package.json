@@ -1,29 +1,32 @@
 {
-	"name": "vscode-arduino",
-	"displayName": "Arduino",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Arduino for Visual Studio Code",
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/Foundation/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
+	"activationEvents": [
+		"workspaceContains:**/*.ino",
+		"onCommand:arduino.verify",
+		"onCommand:arduino.upload",
+		"onCommand:arduino.cliUpload",
+		"onCommand:arduino.uploadUsingProgrammer",
+		"onCommand:arduino.cliUploadUsingProgrammer",
+		"onCommand:arduino.rebuildIntelliSenseConfig",
+		"onCommand:arduino.selectProgrammer",
+		"onCommand:arduino.selectSerialPort",
+		"onCommand:arduino.selectSketch",
+		"onCommand:arduino.openSerialMonitor",
+		"onCommand:arduino.changeTimestampFormat",
+		"onCommand:arduino.closeSerialMonitor",
+		"onCommand:arduino.changeBoardType",
+		"onCommand:arduino.showBoardConfig",
+		"onCommand:arduino.showBoardManager",
+		"onCommand:arduino.showLibraryManager",
+		"onCommand:arduino.showExamples",
+		"onCommand:arduino.initialize"
+	],
 	"author": {
-		"name": "Playform",
 		"email": "Hello@Playform.Cloud",
+		"name": "Playform",
 		"url": "https://playform.cloud"
 	},
-	"type": "module",
-	"main": "./out/src/extension",
-	"scripts": {
-		"build": "gulp build --mode=production",
-		"postinstall": "node ./build/downloadAssets.js && cd ./src/views && npm install",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
 	},
 	"contributes": {
 		"breakpoints": [
@@ -295,27 +298,6 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"workspaceContains:**/*.ino",
-		"onCommand:arduino.verify",
-		"onCommand:arduino.upload",
-		"onCommand:arduino.cliUpload",
-		"onCommand:arduino.uploadUsingProgrammer",
-		"onCommand:arduino.cliUploadUsingProgrammer",
-		"onCommand:arduino.rebuildIntelliSenseConfig",
-		"onCommand:arduino.selectProgrammer",
-		"onCommand:arduino.selectSerialPort",
-		"onCommand:arduino.selectSketch",
-		"onCommand:arduino.openSerialMonitor",
-		"onCommand:arduino.changeTimestampFormat",
-		"onCommand:arduino.closeSerialMonitor",
-		"onCommand:arduino.changeBoardType",
-		"onCommand:arduino.showBoardConfig",
-		"onCommand:arduino.showBoardManager",
-		"onCommand:arduino.showLibraryManager",
-		"onCommand:arduino.showExamples",
-		"onCommand:arduino.initialize"
-	],
 	"dependencies": {
 		"@microsoft/vscode-serial-monitor-api": "^0.1.5",
 		"@vscode/extension-telemetry": "~0.6.2",
@@ -334,6 +316,7 @@
 		"winreg": "^1.2.3",
 		"winston": "^2.4.5"
 	},
+	"description": "Arduino for Visual Studio Code",
 	"devDependencies": {
 		"@babel/core": "^7.15.5",
 		"@babel/preset-env": "^7.15.6",
@@ -361,19 +344,20 @@
 		"plugin-error": "^1.0.1",
 		"typemoq": "^1.6.0",
 		"typescript": "^3.7.5",
-		"typescript-esbuild": "0.4.5",
+		"typescript-esbuild": "",
 		"vscode-test": "^1.4.0",
 		"webpack": "^4.44.1"
 	},
+	"displayName": "Arduino",
 	"extensionDependencies": [
 		"ms-vscode.cpptools",
 		"ms-vscode.vscode-serial-monitor"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
 	"icon": "images/arduino.png",
-	"preview": true,
+	"license": "SEE LICENSE IN LICENSE",
+	"main": "./out/src/extension",
+	"name": "vscode-arduino",
 	"overrides": {
 		"async": "~3.2.3",
 		"es5-ext": "0.10.53",
@@ -381,6 +365,22 @@
 		"semver": "~7.5.2",
 		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
 	},
+	"preview": true,
+	"private": false,
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"scripts": {
+		"build": "gulp build --mode=production",
+		"postinstall": "node ./build/downloadAssets.js && cd ./src/views && npm install",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
+	},
+	"type": "module",
+	"version": "0.0.1",
 	"vsce": {
 		"ignoreFile": "out/.vscodeignore"
 	}
