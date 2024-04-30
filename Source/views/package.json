@@ -1,0 +1,54 @@
+{
+	"name": "arduino-manager",
+	"version": "0.0.1",
+	"private": false,
+	"description": "",
+	"keywords": [
+		"land"
+	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandArduino#readme",
+	"bugs": {
+		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandArduino/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandArduino.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"prepublishOnly": "Build 'Source/**/*.ts'"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@playform/build": "0.0.7",
+		"@playform/document": "0.0.6",
+		"css-loader": "^3.2.0",
+		"file-loader": "^5.0.2",
+		"mini-css-extract-plugin": "^0.8.0",
+		"node-sass": "^7.0.0",
+		"rc-tree": "~1.4.5",
+		"sass-loader": "^6.0.1",
+		"source-map-loader": "^0.1.6",
+		"style-loader": "^0.13.1",
+		"svg-url-loader": "^2.0.2",
+		"ts-loader": "^4.5.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"overrides": {
+		"async": "~3.2.3",
+		"es5-ext": "0.10.53",
+		"node-sass": "^7.0.0",
+		"qs": "~6.10.3",
+		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
+	}
+}
