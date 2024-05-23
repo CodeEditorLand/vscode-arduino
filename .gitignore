@@ -1,6 +1,5 @@
 arduino.log
 out
-node_modules
 .vscode-test
 .idea
 src/views/app/sprites-generated
