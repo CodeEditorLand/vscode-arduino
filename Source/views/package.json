@@ -5,7 +5,7 @@
 	"scripts": {},
 	"dependencies": {},
 	"devDependencies": {
-		"css-loader": "7.1.1",
+		"css-loader": "7.1.2",
 		"file-loader": "6.2.0",
 		"mini-css-extract-plugin": "2.9.0",
 		"node-sass": "9.0.0",
