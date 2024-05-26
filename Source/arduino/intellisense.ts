@@ -1,9 +1,9 @@
 // Copyright (c) Elektronik Workshop. All rights reserved.
 // Licensed under the MIT license.
 
-import * as ccp from "cocopa";
 import * as os from "os";
 import * as path from "path";
+import * as ccp from "cocopa";
 
 import * as constants from "../common/constants";
 import { arduinoChannel } from "../common/outputChannel";
@@ -12,8 +12,8 @@ import { DeviceContext } from "../deviceContext";
 import { VscodeSettings } from "./vscodeSettings";
 
 export interface ICoCoPaContext {
-    callback: (s: string) => void;
-    conclude: () => Promise<void>;
+	callback: (s: string) => void;
+	conclude: () => Promise<void>;
 }
 
 /**
@@ -22,13 +22,16 @@ export interface ICoCoPaContext {
  * configuration.
  */
 export function isCompilerParserEnabled(dc?: DeviceContext) {
-    if (!dc) {
-        dc = DeviceContext.getInstance();
-    }
-    const globalDisable = VscodeSettings.getInstance().disableIntelliSenseAutoGen;
-    const projectSetting = dc.intelliSenseGen;
-    return projectSetting !== "disable" && !globalDisable ||
-           projectSetting === "enable";
+	if (!dc) {
+		dc = DeviceContext.getInstance();
+	}
+	const globalDisable =
+		VscodeSettings.getInstance().disableIntelliSenseAutoGen;
+	const projectSetting = dc.intelliSenseGen;
+	return (
+		(projectSetting !== "disable" && !globalDisable) ||
+		projectSetting === "enable"
+	);
 }
 
 /**
@@ -48,84 +51,99 @@ export function isCompilerParserEnabled(dc?: DeviceContext) {
  *     order into account.
  */
 export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
+	// TODO: callback for local setting: when IG gen is re-enabled file
+	//   analysis trigger. Perhaps for global possible as well?
+	if (!isCompilerParserEnabled(dc)) {
+		return {
+			callback: undefined,
+			conclude: async () => {
+				arduinoChannel.info(
+					"IntelliSense auto-configuration disabled.",
+				);
+			},
+		};
+	}
 
-    // TODO: callback for local setting: when IG gen is re-enabled file
-    //   analysis trigger. Perhaps for global possible as well?
-    if (!isCompilerParserEnabled(dc)) {
-        return {
-            callback: undefined,
-            conclude: async () => {
-                arduinoChannel.info("IntelliSense auto-configuration disabled.");
-            },
-        };
-    }
+	const engines = makeCompilerParserEngines(dc);
+	const runner = new ccp.Runner(engines);
 
-    const engines = makeCompilerParserEngines(dc);
-    const runner = new ccp.Runner(engines);
+	// Set up the callback to be called after parsing
+	const _conclude = async () => {
+		if (!runner.result) {
+			arduinoChannel.warning(
+				"Failed to generate IntelliSense configuration.",
+			);
+			return;
+		}
 
-    // Set up the callback to be called after parsing
-    const _conclude = async () => {
-        if (!runner.result) {
-            arduinoChannel.warning("Failed to generate IntelliSense configuration.");
-            return;
-        }
+		// Normalize compiler and include paths (resolve ".." and ".")
+		runner.result.normalize();
+		// Remove invalid paths
+		await runner.result.cleanup();
 
-        // Normalize compiler and include paths (resolve ".." and ".")
-        runner.result.normalize();
-        // Remove invalid paths
-        await runner.result.cleanup();
+		// Search for Arduino.h in the include paths - we need it for a
+		// forced include - users expect Arduino symbols to be available
+		// in main sketch without having to include the header explicitly
+		const ardHeader = await runner.result.findFile("Arduino.h");
+		const forcedIncludes = ardHeader.length > 0 ? ardHeader : undefined;
+		if (!forcedIncludes) {
+			arduinoChannel.warning(
+				'Unable to locate "Arduino.h" within IntelliSense include paths.',
+			);
+		}
 
-        // Search for Arduino.h in the include paths - we need it for a
-        // forced include - users expect Arduino symbols to be available
-        // in main sketch without having to include the header explicitly
-        const ardHeader = await runner.result.findFile("Arduino.h");
-        const forcedIncludes = ardHeader.length > 0
-            ? ardHeader
-            : undefined;
-        if (!forcedIncludes) {
-            arduinoChannel.warning("Unable to locate \"Arduino.h\" within IntelliSense include paths.");
-        }
+		// The C++ standard is set to the following default value if no compiler flag has been found.
+		const content = new ccp.CCppPropertiesContentResult(
+			runner.result,
+			constants.C_CPP_PROPERTIES_CONFIG_NAME,
+			ccp.CCppPropertiesISMode.Gcc_X64,
+			ccp.CCppPropertiesCStandard.C11,
+			ccp.CCppPropertiesCppStandard.Cpp11,
+			forcedIncludes,
+		);
 
-        // The C++ standard is set to the following default value if no compiler flag has been found.
-        const content = new ccp.CCppPropertiesContentResult(runner.result,
-                                                            constants.C_CPP_PROPERTIES_CONFIG_NAME,
-                                                            ccp.CCppPropertiesISMode.Gcc_X64,
-                                                            ccp.CCppPropertiesCStandard.C11,
-                                                            ccp.CCppPropertiesCppStandard.Cpp11,
-                                                            forcedIncludes);
+		// The following 4 lines are added to prevent null.d from being created in the workspace
+		// directory on MacOS and Linux. This is may be a bug in intelliSense
+		const mmdIndex = runner.result.options.findIndex(
+			(element) => element === "-MMD",
+		);
+		if (mmdIndex) {
+			runner.result.options.splice(mmdIndex);
+		}
 
-        // The following 4 lines are added to prevent null.d from being created in the workspace
-        // directory on MacOS and Linux. This is may be a bug in intelliSense
-        const mmdIndex = runner.result.options.findIndex((element) => element === "-MMD");
-        if (mmdIndex) {
-            runner.result.options.splice(mmdIndex);
-        }
+		// Add USB Connected marco to defines
+		runner.result.defines.push("USBCON");
 
-        // Add USB Connected marco to defines
-        runner.result.defines.push("USBCON")
-
-        try {
-
-            const cmd = os.platform() === "darwin" ? "Cmd" : "Ctrl";
-            const help = `To manually rebuild your IntelliSense configuration run "${cmd}+Alt+I"`;
-            const pPath = path.join(ArduinoWorkspace.rootPath, constants.CPP_CONFIG_FILE);
-            const prop = new ccp.CCppProperties();
-            prop.read(pPath);
-            prop.merge(content, ccp.CCppPropertiesMergeMode.ReplaceSameNames);
-            if (prop.write(pPath)) {
-                arduinoChannel.info(`IntelliSense configuration updated. ${help}`);
-            } else {
-                arduinoChannel.info(`IntelliSense configuration already up to date. ${help}`);
-            }
-        } catch (e) {
-            const estr = JSON.stringify(e);
-            arduinoChannel.error(`Failed to read or write IntelliSense configuration: ${estr}`);
-        }
-    };
-    return {
-        callback: runner.callback(),
-        conclude: _conclude,
-    }
+		try {
+			const cmd = os.platform() === "darwin" ? "Cmd" : "Ctrl";
+			const help = `To manually rebuild your IntelliSense configuration run "${cmd}+Alt+I"`;
+			const pPath = path.join(
+				ArduinoWorkspace.rootPath,
+				constants.CPP_CONFIG_FILE,
+			);
+			const prop = new ccp.CCppProperties();
+			prop.read(pPath);
+			prop.merge(content, ccp.CCppPropertiesMergeMode.ReplaceSameNames);
+			if (prop.write(pPath)) {
+				arduinoChannel.info(
+					`IntelliSense configuration updated. ${help}`,
+				);
+			} else {
+				arduinoChannel.info(
+					`IntelliSense configuration already up to date. ${help}`,
+				);
+			}
+		} catch (e) {
+			const estr = JSON.stringify(e);
+			arduinoChannel.error(
+				`Failed to read or write IntelliSense configuration: ${estr}`,
+			);
+		}
+	};
+	return {
+		callback: runner.callback(),
+		conclude: _conclude,
+	};
 }
 
 /**
@@ -139,10 +157,10 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
  * @param dc Current device context used to generate the engines.
  */
 function makeCompilerParserEngines(dc: DeviceContext) {
-    const sketch = path.basename(dc.sketch);
-    const trigger = ccp.getTriggerForArduinoGcc(sketch);
-    const gccParserEngine = new ccp.ParserGcc(trigger);
-    return [gccParserEngine];
+	const sketch = path.basename(dc.sketch);
+	const trigger = ccp.getTriggerForArduinoGcc(sketch);
+	const gccParserEngine = new ccp.ParserGcc(trigger);
+	return [gccParserEngine];
 }
 
 // Not sure why eslint fails to detect usage of these enums, so disable checking.
@@ -150,43 +168,43 @@ function makeCompilerParserEngines(dc: DeviceContext) {
  * Possible states of AnalysisManager's state machine.
  */
 enum AnalysisState {
-    /**
-     * No analysis request pending.
-     */
-    Idle = "idle",
-    /**
-     * Analysis request pending. Waiting for the time out to expire or for
-     * another build to complete.
-     */
-    Waiting = "waiting",
-    /**
-     * Analysis in progress.
-     */
-    Analyzing = "analyzing",
-    /**
-     * Analysis in progress with yet another analysis request pending.
-     * As soon as the current analysis completes the manager will directly
-     * enter the Waiting state.
-     */
-    AnalyzingWaiting = "analyzing and waiting",
+	/**
+	 * No analysis request pending.
+	 */
+	Idle = "idle",
+	/**
+	 * Analysis request pending. Waiting for the time out to expire or for
+	 * another build to complete.
+	 */
+	Waiting = "waiting",
+	/**
+	 * Analysis in progress.
+	 */
+	Analyzing = "analyzing",
+	/**
+	 * Analysis in progress with yet another analysis request pending.
+	 * As soon as the current analysis completes the manager will directly
+	 * enter the Waiting state.
+	 */
+	AnalyzingWaiting = "analyzing and waiting",
 }
 
 /**
  * Events (edges) which cause state changes within AnalysisManager.
  */
 enum AnalysisEvent {
-    /**
-     * The only external event. Requests an analysis to be run.
-     */
-    AnalysisRequest,
-    /**
-     * The internal wait timeout expired.
-     */
-    WaitTimeout,
-    /**
-     * The current analysis build finished.
-     */
-    AnalysisBuildDone,
+	/**
+	 * The only external event. Requests an analysis to be run.
+	 */
+	AnalysisRequest = 0,
+	/**
+	 * The internal wait timeout expired.
+	 */
+	WaitTimeout = 1,
+	/**
+	 * The current analysis build finished.
+	 */
+	AnalysisBuildDone = 2,
 }
 
 /**
@@ -208,127 +226,126 @@ enum AnalysisEvent {
  * is outdated if no countermeasure is taken.
  */
 export class AnalysisManager {
+	/** The manager's state. */
+	private _state: AnalysisState = AnalysisState.Idle;
+	/** A callback used by the manager to query if the build backend is busy. */
+	private _isBuilding: () => boolean;
+	/** A callback used by the manager to initiate an analysis build. */
+	private _doBuild: () => Promise<void>;
+	/** Timeout for the timeouts/delays in milliseconds. */
+	private _waitPeriodMs: number;
+	/** The internal timer used to implement the above timeouts and delays. */
+	private _timer: NodeJS.Timer;
 
-    /** The manager's state. */
-    private _state: AnalysisState = AnalysisState.Idle;
-    /** A callback used by the manager to query if the build backend is busy. */
-    private _isBuilding: () => boolean;
-    /** A callback used by the manager to initiate an analysis build. */
-    private _doBuild: () => Promise<void>;
-    /** Timeout for the timeouts/delays in milliseconds. */
-    private _waitPeriodMs: number;
-    /** The internal timer used to implement the above timeouts and delays. */
-    private _timer: NodeJS.Timer;
+	/**
+	 * Constructor.
+	 * @param isBuilding Provide a callback which returns true if another build
+	 * is currently in progress.
+	 * @param doBuild Provide a callback which runs the analysis build.
+	 * @param waitPeriodMs The delay the manger should wait for potential new
+	 * analysis request. This delay is used as polling interval as well when
+	 * checking for ongoing builds.
+	 */
+	constructor(
+		isBuilding: () => boolean,
+		doBuild: () => Promise<void>,
+		waitPeriodMs = 1000,
+	) {
+		this._isBuilding = isBuilding;
+		this._doBuild = doBuild;
+		this._waitPeriodMs = waitPeriodMs;
+	}
 
-    /**
-     * Constructor.
-     * @param isBuilding Provide a callback which returns true if another build
-     * is currently in progress.
-     * @param doBuild Provide a callback which runs the analysis build.
-     * @param waitPeriodMs The delay the manger should wait for potential new
-     * analysis request. This delay is used as polling interval as well when
-     * checking for ongoing builds.
-     */
-    constructor(isBuilding: () => boolean,
-                doBuild: () => Promise<void>,
-                waitPeriodMs: number = 1000) {
-        this._isBuilding = isBuilding;
-        this._doBuild = doBuild;
-        this._waitPeriodMs = waitPeriodMs;
-    }
+	/**
+	 * File an analysis request.
+	 * The analysis will be delayed until no further requests are filed
+	 * within a wait period or until any build in progress has terminated.
+	 */
+	public async requestAnalysis() {
+		await this.update(AnalysisEvent.AnalysisRequest);
+	}
 
-    /**
-     * File an analysis request.
-     * The analysis will be delayed until no further requests are filed
-     * within a wait period or until any build in progress has terminated.
-     */
-    public async requestAnalysis() {
-        await this.update(AnalysisEvent.AnalysisRequest);
-    }
+	/**
+	 * Update the manager's state machine.
+	 * @param event The event which will cause the state transition.
+	 *
+	 * Implementation note: asynchronous edge actions must be called after
+	 * setting the new state since they don't return immediately.
+	 */
+	private async update(event: AnalysisEvent) {
+		switch (this._state) {
+			case AnalysisState.Idle:
+				if (event === AnalysisEvent.AnalysisRequest) {
+					this._state = AnalysisState.Waiting;
+					this.startWaitTimeout();
+				}
+				break;
 
-    /**
-     * Update the manager's state machine.
-     * @param event The event which will cause the state transition.
-     *
-     * Implementation note: asynchronous edge actions must be called after
-     * setting the new state since they don't return immediately.
-     */
-    private async update(event: AnalysisEvent) {
+			case AnalysisState.Waiting:
+				if (event === AnalysisEvent.AnalysisRequest) {
+					// every new request restarts timer
+					this.startWaitTimeout();
+				} else if (event === AnalysisEvent.WaitTimeout) {
+					if (this._isBuilding()) {
+						// another build in progress, continue waiting
+						this.startWaitTimeout();
+					} else {
+						// no other build in progress -> launch analysis
+						this._state = AnalysisState.Analyzing;
+						await this.startAnalysis();
+					}
+				}
+				break;
 
-        switch (this._state) {
+			case AnalysisState.Analyzing:
+				if (event === AnalysisEvent.AnalysisBuildDone) {
+					this._state = AnalysisState.Idle;
+				} else if (event === AnalysisEvent.AnalysisRequest) {
+					this._state = AnalysisState.AnalyzingWaiting;
+				}
+				break;
 
-            case AnalysisState.Idle:
-                if (event === AnalysisEvent.AnalysisRequest) {
-                    this._state = AnalysisState.Waiting;
-                    this.startWaitTimeout();
-                }
-                break;
+			case AnalysisState.AnalyzingWaiting:
+				if (event === AnalysisEvent.AnalysisBuildDone) {
+					// emulate the transition from idle to waiting
+					// (we don't care if this adds an additional
+					// timeout - event driven analysis is not time-
+					// critical)
+					this._state = AnalysisState.Idle;
+					await this.update(AnalysisEvent.AnalysisRequest);
+				}
+				break;
+		}
+	}
 
-            case AnalysisState.Waiting:
-                if (event === AnalysisEvent.AnalysisRequest) {
-                    // every new request restarts timer
-                    this.startWaitTimeout();
-                } else if (event === AnalysisEvent.WaitTimeout) {
-                    if (this._isBuilding()) {
-                        // another build in progress, continue waiting
-                        this.startWaitTimeout();
-                    } else {
-                        // no other build in progress -> launch analysis
-                        this._state = AnalysisState.Analyzing;
-                        await this.startAnalysis();
-                    }
-                }
-                break;
+	/**
+	 * Starts the wait timeout timer.
+	 * If it's already running, the current timer is stopped and restarted.
+	 * The timeout callback will then update the state machine.
+	 */
+	private startWaitTimeout() {
+		if (this._timer) {
+			clearTimeout(this._timer);
+		}
+		this._timer = setTimeout(() => {
+			// reset timer variable first - calling update can cause
+			// the timer to be restarted.
+			this._timer = undefined;
+			this.update(AnalysisEvent.WaitTimeout);
+		}, this._waitPeriodMs);
+	}
 
-            case AnalysisState.Analyzing:
-                if (event === AnalysisEvent.AnalysisBuildDone) {
-                    this._state = AnalysisState.Idle;
-                } else if (event === AnalysisEvent.AnalysisRequest) {
-                    this._state = AnalysisState.AnalyzingWaiting;
-                }
-                break;
-
-            case AnalysisState.AnalyzingWaiting:
-                if (event === AnalysisEvent.AnalysisBuildDone) {
-                    // emulate the transition from idle to waiting
-                    // (we don't care if this adds an additional
-                    // timeout - event driven analysis is not time-
-                    // critical)
-                    this._state = AnalysisState.Idle;
-                    await this.update(AnalysisEvent.AnalysisRequest);
-                }
-                break;
-        }
-    }
-
-    /**
-     * Starts the wait timeout timer.
-     * If it's already running, the current timer is stopped and restarted.
-     * The timeout callback will then update the state machine.
-     */
-    private startWaitTimeout() {
-        if (this._timer) {
-            clearTimeout(this._timer);
-        }
-        this._timer = setTimeout(() => {
-            // reset timer variable first - calling update can cause
-            // the timer to be restarted.
-            this._timer = undefined;
-            this.update(AnalysisEvent.WaitTimeout);
-        }, this._waitPeriodMs);
-    }
-
-    /**
-     * Starts the analysis build.
-     * When done, the callback will update the state machine.
-     */
-    private async startAnalysis() {
-        await this._doBuild()
-        .then(() => {
-            this.update(AnalysisEvent.AnalysisBuildDone);
-        })
-        .catch((reason) => {
-            this.update(AnalysisEvent.AnalysisBuildDone);
-        });
-    }
+	/**
+	 * Starts the analysis build.
+	 * When done, the callback will update the state machine.
+	 */
+	private async startAnalysis() {
+		await this._doBuild()
+			.then(() => {
+				this.update(AnalysisEvent.AnalysisBuildDone);
+			})
+			.catch((reason) => {
+				this.update(AnalysisEvent.AnalysisBuildDone);
+			});
+	}
 }
