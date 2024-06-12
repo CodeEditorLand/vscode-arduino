@@ -2,24 +2,24 @@
 	"dependencies": {},
 	"description": "",
 	"devDependencies": {
-		"css-loader": "^7.1.2",
-		"file-loader": "^6.2.0",
-		"mini-css-extract-plugin": "^2.9.0",
-		"node-sass": "^9.0.0",
-		"rc-tree": "~5.8.7",
-		"sass-loader": "^14.2.1",
-		"source-map-loader": "^5.0.0",
-		"style-loader": "^4.0.0",
-		"svg-url-loader": "^8.0.0",
-		"ts-loader": "^9.5.1"
+		"css-loader": "7.1.2",
+		"file-loader": "6.2.0",
+		"mini-css-extract-plugin": "2.9.0",
+		"node-sass": "9.0.0",
+		"rc-tree": "5.8.7",
+		"sass-loader": "14.2.1",
+		"source-map-loader": "5.0.0",
+		"style-loader": "4.0.0",
+		"svg-url-loader": "8.0.0",
+		"ts-loader": "9.5.1"
 	},
 	"main": "index.js",
 	"name": "arduino-manager",
 	"overrides": {
-		"async": "~3.2.3",
+		"async": "3.2.3",
 		"es5-ext": "0.10.53",
-		"node-sass": "^9.0.0",
-		"qs": "~6.10.3",
+		"node-sass": "9.0.0",
+		"qs": "6.10.3",
 		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
 	},
 	"scripts": {}
