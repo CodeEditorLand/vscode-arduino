@@ -299,7 +299,7 @@
 		"iconv-lite": "0.6.3",
 		"impor": "0.1.1",
 		"properties": "1.2.1",
-		"strftime": "0.10.2",
+		"strftime": "0.10.3",
 		"usb-detection": "4.14.2",
 		"uuid": "10.0.0",
 		"winreg": "1.2.5",
