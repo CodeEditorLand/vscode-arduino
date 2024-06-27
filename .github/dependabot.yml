@@ -24,9 +24,3 @@ updates:
       schedule:
           interval: "daily"
       versioning-strategy: increase
-
-    - package-ecosystem: "npm"
-      directory: "/src/views"
-      schedule:
-          interval: "daily"
-      versioning-strategy: increase
