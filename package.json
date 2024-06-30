@@ -1,25 +1,11 @@
 {
-	"activationEvents": [
-		"workspaceContains:**/*.ino",
-		"onCommand:arduino.verify",
-		"onCommand:arduino.upload",
-		"onCommand:arduino.cliUpload",
-		"onCommand:arduino.uploadUsingProgrammer",
-		"onCommand:arduino.cliUploadUsingProgrammer",
-		"onCommand:arduino.rebuildIntelliSenseConfig",
-		"onCommand:arduino.selectProgrammer",
-		"onCommand:arduino.selectSerialPort",
-		"onCommand:arduino.selectSketch",
-		"onCommand:arduino.openSerialMonitor",
-		"onCommand:arduino.changeTimestampFormat",
-		"onCommand:arduino.closeSerialMonitor",
-		"onCommand:arduino.changeBoardType",
-		"onCommand:arduino.showBoardConfig",
-		"onCommand:arduino.showBoardManager",
-		"onCommand:arduino.showLibraryManager",
-		"onCommand:arduino.showExamples",
-		"onCommand:arduino.initialize"
-	],
+	"name": "vscode-arduino",
+	"displayName": "Arduino",
+	"description": "Arduino for Visual Studio Code",
+	"main": "./out/src/extension",
+	"scripts": {
+		"build": "gulp build --mode=production"
+	},
 	"contributes": {
 		"breakpoints": [
 			{
@@ -290,6 +276,27 @@
 			}
 		]
 	},
+	"activationEvents": [
+		"workspaceContains:**/*.ino",
+		"onCommand:arduino.verify",
+		"onCommand:arduino.upload",
+		"onCommand:arduino.cliUpload",
+		"onCommand:arduino.uploadUsingProgrammer",
+		"onCommand:arduino.cliUploadUsingProgrammer",
+		"onCommand:arduino.rebuildIntelliSenseConfig",
+		"onCommand:arduino.selectProgrammer",
+		"onCommand:arduino.selectSerialPort",
+		"onCommand:arduino.selectSketch",
+		"onCommand:arduino.openSerialMonitor",
+		"onCommand:arduino.changeTimestampFormat",
+		"onCommand:arduino.closeSerialMonitor",
+		"onCommand:arduino.changeBoardType",
+		"onCommand:arduino.showBoardConfig",
+		"onCommand:arduino.showBoardManager",
+		"onCommand:arduino.showLibraryManager",
+		"onCommand:arduino.showExamples",
+		"onCommand:arduino.initialize"
+	],
 	"dependencies": {
 		"body-parser": "1.20.2",
 		"cocopa": "0.0.14",
@@ -305,7 +312,6 @@
 		"winreg": "1.2.5",
 		"winston": "3.13.0"
 	},
-	"description": "Arduino for Visual Studio Code",
 	"devDependencies": {
 		"@types/glob": "8.1.0",
 		"@types/node": "20.14.9",
@@ -322,24 +328,18 @@
 		"plugin-error": "2.0.1",
 		"typemoq": "2.1.0"
 	},
-	"displayName": "Arduino",
 	"extensionDependencies": [
 		"ms-vscode.cpptools",
 		"ms-vscode.vscode-serial-monitor"
 	],
 	"icon": "images/arduino.png",
-	"main": "./out/src/extension",
-	"name": "vscode-arduino",
+	"preview": true,
 	"overrides": {
 		"async": "3.2.3",
 		"es5-ext": "0.10.53",
 		"node-sass": "7.0.0",
 		"semver": "7.5.2",
 		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
-	},
-	"preview": true,
-	"scripts": {
-		"build": "gulp build --mode=production"
 	},
 	"vsce": {
 		"ignoreFile": "out/.vscodeignore"

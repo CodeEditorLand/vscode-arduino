@@ -1,6 +1,9 @@
 {
-	"dependencies": {},
+	"name": "arduino-manager",
 	"description": "",
+	"main": "index.js",
+	"scripts": {},
+	"dependencies": {},
 	"devDependencies": {
 		"css-loader": "7.1.2",
 		"file-loader": "6.2.0",
@@ -13,14 +16,11 @@
 		"svg-url-loader": "8.0.0",
 		"ts-loader": "9.5.1"
 	},
-	"main": "index.js",
-	"name": "arduino-manager",
 	"overrides": {
 		"async": "3.2.3",
 		"es5-ext": "0.10.53",
 		"node-sass": "9.0.0",
 		"qs": "6.10.3",
 		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
-	},
-	"scripts": {}
+	}
 }
