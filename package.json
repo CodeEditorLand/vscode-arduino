@@ -302,7 +302,7 @@
 		"cocopa": "0.0.14",
 		"eventemitter2": "6.4.9",
 		"extract-zip": "2.0.1",
-		"glob": "10.4.2",
+		"glob": "11.0.0",
 		"iconv-lite": "0.6.3",
 		"impor": "0.1.1",
 		"properties": "1.2.1",
@@ -314,7 +314,7 @@
 	},
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/node": "20.14.9",
+		"@types/node": "20.14.10",
 		"@types/strftime": "0.9.8",
 		"@types/uuid": "10.0.0",
 		"@types/winreg": "1.2.36",
