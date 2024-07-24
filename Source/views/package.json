@@ -10,7 +10,7 @@
 		"mini-css-extract-plugin": "2.9.0",
 		"node-sass": "9.0.0",
 		"rc-tree": "5.8.8",
-		"sass-loader": "14.2.1",
+		"sass-loader": "15.0.0",
 		"source-map-loader": "5.0.0",
 		"style-loader": "4.0.0",
 		"svg-url-loader": "8.0.0",
