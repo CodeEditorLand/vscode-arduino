@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"activationEvents": [
 		"workspaceContains:**/*.ino",
 		"onCommand:arduino.verify",
@@ -20,6 +21,15 @@
 		"onCommand:arduino.showExamples",
 		"onCommand:arduino.initialize"
 	],
+=======
+	"name": "vscode-arduino",
+	"displayName": "Arduino",
+	"description": "Arduino for Visual Studio Code",
+	"main": "./out/src/extension",
+	"scripts": {
+		"build": "gulp build --mode=production"
+	},
+>>>>>>> dff321ed0d8c37f1388080fee8e74df614fc7ad7
 	"contributes": {
 		"breakpoints": [
 			{
@@ -290,6 +300,7 @@
 			}
 		]
 	},
+<<<<<<< HEAD
 	"dependencies": {
 		"body-parser": "^1.16.1",
 		"cocopa": "0.0.13",
@@ -323,11 +334,66 @@
 		"typemoq": "^1.6.0"
 	},
 	"displayName": "Arduino",
+=======
+	"activationEvents": [
+		"workspaceContains:**/*.ino",
+		"onCommand:arduino.verify",
+		"onCommand:arduino.upload",
+		"onCommand:arduino.cliUpload",
+		"onCommand:arduino.uploadUsingProgrammer",
+		"onCommand:arduino.cliUploadUsingProgrammer",
+		"onCommand:arduino.rebuildIntelliSenseConfig",
+		"onCommand:arduino.selectProgrammer",
+		"onCommand:arduino.selectSerialPort",
+		"onCommand:arduino.selectSketch",
+		"onCommand:arduino.openSerialMonitor",
+		"onCommand:arduino.changeTimestampFormat",
+		"onCommand:arduino.closeSerialMonitor",
+		"onCommand:arduino.changeBoardType",
+		"onCommand:arduino.showBoardConfig",
+		"onCommand:arduino.showBoardManager",
+		"onCommand:arduino.showLibraryManager",
+		"onCommand:arduino.showExamples",
+		"onCommand:arduino.initialize"
+	],
+	"dependencies": {
+		"body-parser": "2.0.0-beta.2",
+		"cocopa": "0.0.14",
+		"eventemitter2": "6.4.9",
+		"extract-zip": "2.0.1",
+		"glob": "11.0.0",
+		"iconv-lite": "0.6.3",
+		"impor": "0.1.1",
+		"properties": "1.2.1",
+		"strftime": "0.10.3",
+		"usb-detection": "4.14.2",
+		"uuid": "10.0.0",
+		"winreg": "1.2.5",
+		"winston": "3.13.1"
+	},
+	"devDependencies": {
+		"@types/glob": "8.1.0",
+		"@types/node": "20.14.12",
+		"@types/strftime": "0.9.8",
+		"@types/uuid": "10.0.0",
+		"@types/winreg": "1.2.36",
+		"acorn": "8.12.1",
+		"ajv": "8.17.1",
+		"del": "7.1.0",
+		"download": "8.0.0",
+		"fancy-log": "2.0.0",
+		"minimist": "1.2.8",
+		"node-gyp": "10.2.0",
+		"plugin-error": "2.0.1",
+		"typemoq": "2.1.0"
+	},
+>>>>>>> dff321ed0d8c37f1388080fee8e74df614fc7ad7
 	"extensionDependencies": [
 		"ms-vscode.cpptools",
 		"ms-vscode.vscode-serial-monitor"
 	],
 	"icon": "images/arduino.png",
+<<<<<<< HEAD
 	"main": "./out/src/extension",
 	"name": "vscode-arduino",
 	"overrides": {
@@ -340,6 +406,15 @@
 	"preview": true,
 	"scripts": {
 		"build": "gulp build --mode=production"
+=======
+	"preview": true,
+	"overrides": {
+		"async": "3.2.3",
+		"es5-ext": "0.10.53",
+		"node-sass": "7.0.0",
+		"semver": "7.5.2",
+		"string_decoder": "https://github.com/microsoft/vscode-arduino/releases/download/v0.4.12-rc2/string_decoder-10.0.0.tgz"
+>>>>>>> dff321ed0d8c37f1388080fee8e74df614fc7ad7
 	},
 	"vsce": {
 		"ignoreFile": "out/.vscodeignore"
