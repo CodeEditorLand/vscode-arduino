@@ -1,15 +1,15 @@
 {
-    "comments": {
-        "lineComment": "//",
-        "blockComment": [ "/*", "*/" ]
-    },
-    "brackets": [
-        ["{", "}"],
-        ["[", "]"],
-        ["(", ")"],
-        ["<", ">"]
-    ],
-    "autoClosingPairs": [
+	"comments": {
+		"lineComment": "//",
+		"blockComment": ["/*", "*/"]
+	},
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["<", ">"]
+	],
+	"autoClosingPairs": [
 		["{", "}"],
 		["[", "]"],
 		["(", ")"],
