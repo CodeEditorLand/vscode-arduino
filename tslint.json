@@ -1,47 +1,37 @@
 {
-    "extends": "tslint:latest",
-    "rules": {
-        "no-var-requires": false,
-        "variable-name": [
-            true,
-            "allow-leading-underscore"
-        ],
-        "no-unused-expression": true,
-        "no-duplicate-variable": true,
-        "max-classes-per-file": [
-            false
-        ],
-        "no-empty": false,
-        "object-literal-sort-keys": false,
-        "curly": true,
-        "class-name": true,
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-module",
-            "check-separator",
-            "check-type"
-        ],
-        "semicolon": [
-            "always"
-        ],
-        "triple-equals": true,
-        "max-line-length": [
-            true,
-            150
-        ], 
-        "no-angle-bracket-type-assertion": false,
-        "no-implicit-dependencies": [true, "dev", ["vscode"]],
-        "no-string-literal": false,
-        "no-object-literal-type-assertion": false,
-        "no-invalid-template-strings": false,
-        "no-submodule-imports": false,
-        "prefer-conditional-expression": false,
-        "no-return-await": false,
-        "no-shadowed-variable": false,
-        "no-duplicate-imports": false,
-        "array-type": false
-    }
+	"extends": "tslint:latest",
+	"rules": {
+		"no-var-requires": false,
+		"variable-name": [true, "allow-leading-underscore"],
+		"no-unused-expression": true,
+		"no-duplicate-variable": true,
+		"max-classes-per-file": [false],
+		"no-empty": false,
+		"object-literal-sort-keys": false,
+		"curly": true,
+		"class-name": true,
+		"whitespace": [
+			true,
+			"check-branch",
+			"check-decl",
+			"check-operator",
+			"check-module",
+			"check-separator",
+			"check-type"
+		],
+		"semicolon": ["always"],
+		"triple-equals": true,
+		"max-line-length": [true, 150],
+		"no-angle-bracket-type-assertion": false,
+		"no-implicit-dependencies": [true, "dev", ["vscode"]],
+		"no-string-literal": false,
+		"no-object-literal-type-assertion": false,
+		"no-invalid-template-strings": false,
+		"no-submodule-imports": false,
+		"prefer-conditional-expression": false,
+		"no-return-await": false,
+		"no-shadowed-variable": false,
+		"no-duplicate-imports": false,
+		"array-type": false
+	}
 }
