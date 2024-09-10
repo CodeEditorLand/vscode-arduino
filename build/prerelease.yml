@@ -8,21 +8,21 @@ name: $(Date:yyMMdd)$(Rev:rrr)
 trigger: none
 pr: none
 schedules:
-    - cron: "0 2 * * *"
-      displayName: Daily 2 AM
-      branches:
-          include:
-              - main
+- cron: "0 2 * * *"
+  displayName: Daily 2 AM
+  branches:
+    include:
+    - main
 
 variables:
-    SignType: real
+  SignType: real
 
 resources:
-    repositories:
-        - repository: MicroBuildTemplate
-          type: git
-          name: 1ESPipelineTemplates/MicroBuildTemplate
-          ref: refs/tags/release
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate

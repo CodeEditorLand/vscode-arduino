@@ -5,12 +5,15 @@
 
 // This is the place for API experiments and proposal.
 
-declare module "vscode" {
+declare module 'vscode' {
+
 	export namespace window {
+
 		export function sampleFunction(): Thenable<any>;
 	}
 
 	export namespace window {
+
 		/**
 		 * Register a [TreeExplorerNodeProvider](#TreeExplorerNodeProvider).
 		 *
@@ -18,10 +21,7 @@ declare module "vscode" {
 		 * @param provider A [TreeExplorerNodeProvider](#TreeExplorerNodeProvider).
 		 * @return A [disposable](#Disposable) that unregisters this provider when being disposed.
 		 */
-		export function registerTreeExplorerNodeProvider(
-			providerId: string,
-			provider: TreeExplorerNodeProvider<any>,
-		): Disposable;
+		export function registerTreeExplorerNodeProvider(providerId: string, provider: TreeExplorerNodeProvider<any>): Disposable;
 	}
 
 	/**
@@ -39,6 +39,7 @@ declare module "vscode" {
 	 * - clickCommand: A command to execute when the node is clicked.
 	 */
 	export interface TreeExplorerNodeProvider<T> {
+
 		/**
 		 * Provide the root node. This function will be called when the tree explorer is activated
 		 * for the first time. The root node is hidden and its direct children will be displayed on the first level of
