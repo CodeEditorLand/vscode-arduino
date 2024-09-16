@@ -1,0 +1,36 @@
+// Available variables which can be used inside of strings.
+// ${workspaceRoot}: the root folder of the team
+// ${file}: the current opened file
+// ${fileBasename}: the current opened file's basename
+// ${fileDirname}: the current opened file's dirname
+// ${fileExtname}: the current opened file's extension
+// ${cwd}: the current working directory of the spawned process
+// A task runner that calls a custom npm script that compiles the extension.
+{
+    "version": "2.0.0",
+    "command": "gulp",
+    "args": [
+        "--no-color"
+    ],
+    "tasks": [
+        {
+            "label": "build",
+            "args": ["build"],
+            "type": "shell",
+            "group": "build",
+            "isBackground": false,
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "label": "build_without_view",
+            "args": ["build_without_view"],
+            "group": "build",
+            "isBackground": false,
+            "problemMatcher": [
+                "$tsc"
+            ]
+        }
+    ]
+}
