@@ -3,15 +3,21 @@
 
 import * as child_process from "child_process";
 import * as fs from "fs";
-import * as iconv from "iconv-lite";
 import * as os from "os";
 import * as path from "path";
+import * as iconv from "iconv-lite";
 import * as properties from "properties";
 import * as vscode from "vscode";
 import * as WinReg from "winreg";
+
 import { arduinoChannel } from "./outputChannel";
 
-const encodingMapping: object = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../misc", "codepageMapping.json"), "utf8"));
+const encodingMapping: object = JSON.parse(
+	fs.readFileSync(
+		path.join(__dirname, "../../../misc", "codepageMapping.json"),
+		"utf8",
+	),
+);
 
 /**
  * This function will detect the file existing in the sync mode.
@@ -19,11 +25,11 @@ const encodingMapping: object = JSON.parse(fs.readFileSync(path.join(__dirname, 
  * @argument {string} filePath
  */
 export function fileExistsSync(filePath: string): boolean {
-    try {
-        return fs.statSync(filePath).isFile();
-    } catch (e) {
-        return false;
-    }
+	try {
+		return fs.statSync(filePath).isFile();
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
@@ -32,11 +38,11 @@ export function fileExistsSync(filePath: string): boolean {
  * @argument {string} dirPath
  */
 export function directoryExistsSync(dirPath: string): boolean {
-    try {
-        return fs.statSync(dirPath).isDirectory();
-    } catch (e) {
-        return false;
-    }
+	try {
+		return fs.statSync(dirPath).isDirectory();
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
@@ -46,15 +52,18 @@ export function directoryExistsSync(dirPath: string): boolean {
  * @argument {string} dirPath
  * @argument {boolean} folderOnly
  */
-export function readdirSync(dirPath: string, folderOnly: boolean = false): string[] {
-    const dirs = fs.readdirSync(dirPath);
-    if (folderOnly) {
-        return dirs.filter((subdir) => {
-            return directoryExistsSync(path.join(dirPath, subdir));
-        });
-    } else {
-        return dirs;
-    }
+export function readdirSync(
+	dirPath: string,
+	folderOnly: boolean = false,
+): string[] {
+	const dirs = fs.readdirSync(dirPath);
+	if (folderOnly) {
+		return dirs.filter((subdir) => {
+			return directoryExistsSync(path.join(dirPath, subdir));
+		});
+	} else {
+		return dirs;
+	}
 }
 
 /**
@@ -63,18 +72,18 @@ export function readdirSync(dirPath: string, folderOnly: boolean = false): strin
  * @argument {string} dirPath
  */
 export function mkdirRecursivelySync(dirPath: string): void {
-    if (directoryExistsSync(dirPath)) {
-        return;
-    }
-    const dirname = path.dirname(dirPath);
-    if (path.normalize(dirname) === path.normalize(dirPath)) {
-        fs.mkdirSync(dirPath);
-    } else if (directoryExistsSync(dirname)) {
-        fs.mkdirSync(dirPath);
-    } else {
-        mkdirRecursivelySync(dirname);
-        fs.mkdirSync(dirPath);
-    }
+	if (directoryExistsSync(dirPath)) {
+		return;
+	}
+	const dirname = path.dirname(dirPath);
+	if (path.normalize(dirname) === path.normalize(dirPath)) {
+		fs.mkdirSync(dirPath);
+	} else if (directoryExistsSync(dirname)) {
+		fs.mkdirSync(dirPath);
+	} else {
+		mkdirRecursivelySync(dirname);
+		fs.mkdirSync(dirPath);
+	}
 }
 
 /**
@@ -83,75 +92,74 @@ export function mkdirRecursivelySync(dirPath: string): void {
  * @argument {string} rootPath
  */
 export function rmdirRecursivelySync(rootPath: string): void {
-    if (fs.existsSync(rootPath)) {
-        fs.readdirSync(rootPath).forEach((file) => {
-            const curPath = path.join(rootPath, file);
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
-                rmdirRecursivelySync(curPath);
-            } else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-        fs.rmdirSync(rootPath);
-    }
+	if (fs.existsSync(rootPath)) {
+		fs.readdirSync(rootPath).forEach((file) => {
+			const curPath = path.join(rootPath, file);
+			if (fs.lstatSync(curPath).isDirectory()) {
+				// recurse
+				rmdirRecursivelySync(curPath);
+			} else {
+				// delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(rootPath);
+	}
 }
 
 function copyFileSync(src, dest, overwrite: boolean = true) {
-    if (!fileExistsSync(src) || (!overwrite && fileExistsSync(dest))) {
-        return;
-    }
-    const BUF_LENGTH = 64 * 1024;
-    const buf = new Buffer(BUF_LENGTH);
-    let lastBytes = BUF_LENGTH;
-    let pos = 0;
-    let srcFd = null;
-    let destFd = null;
+	if (!fileExistsSync(src) || (!overwrite && fileExistsSync(dest))) {
+		return;
+	}
+	const BUF_LENGTH = 64 * 1024;
+	const buf = new Buffer(BUF_LENGTH);
+	let lastBytes = BUF_LENGTH;
+	let pos = 0;
+	let srcFd = null;
+	let destFd = null;
 
-    try {
-        srcFd = fs.openSync(src, "r");
-    } catch (error) {
-    }
+	try {
+		srcFd = fs.openSync(src, "r");
+	} catch (error) {}
 
-    try {
-        destFd = fs.openSync(dest, "w");
-    } catch (error) {
-    }
+	try {
+		destFd = fs.openSync(dest, "w");
+	} catch (error) {}
 
-    try {
-        while (lastBytes === BUF_LENGTH) {
-            lastBytes = fs.readSync(srcFd, buf, 0, BUF_LENGTH, pos);
-            fs.writeSync(destFd, buf, 0, lastBytes);
-            pos += lastBytes;
-        }
-    } catch (error) {
-    }
+	try {
+		while (lastBytes === BUF_LENGTH) {
+			lastBytes = fs.readSync(srcFd, buf, 0, BUF_LENGTH, pos);
+			fs.writeSync(destFd, buf, 0, lastBytes);
+			pos += lastBytes;
+		}
+	} catch (error) {}
 
-    if (srcFd) {
-        fs.closeSync(srcFd);
-    }
-    if (destFd) {
-        fs.closeSync(destFd);
-    }
+	if (srcFd) {
+		fs.closeSync(srcFd);
+	}
+	if (destFd) {
+		fs.closeSync(destFd);
+	}
 }
 
 function copyFolderRecursivelySync(src, dest) {
-    if (!directoryExistsSync(src)) {
-        return;
-    }
-    if (!directoryExistsSync(dest)) {
-        mkdirRecursivelySync(dest);
-    }
+	if (!directoryExistsSync(src)) {
+		return;
+	}
+	if (!directoryExistsSync(dest)) {
+		mkdirRecursivelySync(dest);
+	}
 
-    const items = fs.readdirSync(src);
-    for (const item of items) {
-        const fullPath = path.join(src, item);
-        const targetPath = path.join(dest, item);
-        if (directoryExistsSync(fullPath)) {
-            copyFolderRecursivelySync(fullPath, targetPath);
-        } else if (fileExistsSync(fullPath)) {
-            copyFileSync(fullPath, targetPath);
-        }
-    }
+	const items = fs.readdirSync(src);
+	for (const item of items) {
+		const fullPath = path.join(src, item);
+		const targetPath = path.join(dest, item);
+		if (directoryExistsSync(fullPath)) {
+			copyFolderRecursivelySync(fullPath, targetPath);
+		} else if (fileExistsSync(fullPath)) {
+			copyFileSync(fullPath, targetPath);
+		}
+	}
 }
 
 /**
@@ -160,21 +168,21 @@ function copyFolderRecursivelySync(src, dest) {
  * @argument {string} dest
  */
 export function cp(src, dest) {
-    if (fileExistsSync(src)) {
-        let targetFile = dest;
-        if (directoryExistsSync(dest)) {
-            targetFile = path.join(dest, path.basename(src));
-        }
-        if (path.relative(src, targetFile)) {
-            // if the source and target file is the same, skip copying.
-            return;
-        }
-        copyFileSync(src, targetFile);
-    } else if (directoryExistsSync(src)) {
-        copyFolderRecursivelySync(src, dest);
-    } else {
-        throw new Error(`No such file or directory: ${src}`);
-    }
+	if (fileExistsSync(src)) {
+		let targetFile = dest;
+		if (directoryExistsSync(dest)) {
+			targetFile = path.join(dest, path.basename(src));
+		}
+		if (path.relative(src, targetFile)) {
+			// if the source and target file is the same, skip copying.
+			return;
+		}
+		copyFileSync(src, targetFile);
+	} else if (directoryExistsSync(src)) {
+		copyFolderRecursivelySync(src, dest);
+	} else {
+		throw new Error(`No such file or directory: ${src}`);
+	}
 }
 
 /**
@@ -182,7 +190,10 @@ export function cp(src, dest) {
  * @argument {string} filePath
  */
 export function isArduinoFile(filePath): boolean {
-    return fileExistsSync(filePath) && (path.extname(filePath) === ".ino" || path.extname(filePath) === ".pde");
+	return (
+		fileExistsSync(filePath) &&
+		(path.extname(filePath) === ".ino" || path.extname(filePath) === ".pde")
+	);
 }
 
 /**
@@ -194,158 +205,163 @@ export function isArduinoFile(filePath): boolean {
  * @param {(string) => {}} - callback for stdout text
  */
 export function spawn(
-    command: string,
-    args: string[] = [],
-    options: child_process.SpawnOptions = {},
-    output?: {channel?: vscode.OutputChannel,
-              stdout?: (s: string) => void,
-              stderr?: (s: string) => void},
+	command: string,
+	args: string[] = [],
+	options: child_process.SpawnOptions = {},
+	output?: {
+		channel?: vscode.OutputChannel;
+		stdout?: (s: string) => void;
+		stderr?: (s: string) => void;
+	},
 ): Thenable<object> {
-    return new Promise((resolve, reject) => {
-        options.cwd = options.cwd || path.resolve(path.join(__dirname, ".."));
-        const child = child_process.spawn(command, args, options);
+	return new Promise((resolve, reject) => {
+		options.cwd = options.cwd || path.resolve(path.join(__dirname, ".."));
+		const child = child_process.spawn(command, args, options);
 
-        let codepage = "65001";
-        if (os.platform() === "win32") {
-            codepage = getArduinoL4jCodepage(command.replace(/.exe$/i, ".l4j.ini"));
-            if (!codepage) {
-                try {
-                    const chcp = child_process.execSync("chcp.com");
-                    codepage = chcp.toString().split(":").pop().trim();
-                } catch (error) {
-                    arduinoChannel.warning(`Defaulting to code page 850 because chcp.com failed.\
+		let codepage = "65001";
+		if (os.platform() === "win32") {
+			codepage = getArduinoL4jCodepage(
+				command.replace(/.exe$/i, ".l4j.ini"),
+			);
+			if (!codepage) {
+				try {
+					const chcp = child_process.execSync("chcp.com");
+					codepage = chcp.toString().split(":").pop().trim();
+				} catch (error) {
+					arduinoChannel.warning(`Defaulting to code page 850 because chcp.com failed.\
                     \rEnsure your path includes %SystemRoot%\\system32\r${error.message}`);
-                    codepage = "850";
-                }
-            }
-        }
+					codepage = "850";
+				}
+			}
+		}
 
-        if (output) {
-            if (output.channel || output.stdout) {
-                child.stdout.on("data", (data: Buffer) => {
-                    const decoded = decodeData(data, codepage);
-                    if (output.stdout) {
-                        output.stdout(decoded);
-                    }
-                    if (output.channel) {
-                        output.channel.append(decoded);
-                    }
-                });
-            }
-            if (output.channel || output.stderr) {
-                child.stderr.on("data", (data: Buffer) => {
-                    const decoded = decodeData(data, codepage);
-                    if (output.stderr) {
-                        output.stderr(decoded);
-                    }
-                    if (output.channel) {
-                        output.channel.append(decoded);
-                    }
-                });
-            }
-        }
+		if (output) {
+			if (output.channel || output.stdout) {
+				child.stdout.on("data", (data: Buffer) => {
+					const decoded = decodeData(data, codepage);
+					if (output.stdout) {
+						output.stdout(decoded);
+					}
+					if (output.channel) {
+						output.channel.append(decoded);
+					}
+				});
+			}
+			if (output.channel || output.stderr) {
+				child.stderr.on("data", (data: Buffer) => {
+					const decoded = decodeData(data, codepage);
+					if (output.stderr) {
+						output.stderr(decoded);
+					}
+					if (output.channel) {
+						output.channel.append(decoded);
+					}
+				});
+			}
+		}
 
-        child.on("error", (error) => reject({ error }));
+		child.on("error", (error) => reject({ error }));
 
-        // It's important to use use the "close" event instead of "exit" here.
-        // There could still be buffered data in stdout or stderr when the
-        // process exits that we haven't received yet.
-        child.on("close", (code) => {
-            if (code === 0) {
-                resolve({ code });
-            } else {
-                reject({ code });
-            }
-        });
-    });
+		// It's important to use use the "close" event instead of "exit" here.
+		// There could still be buffered data in stdout or stderr when the
+		// process exits that we haven't received yet.
+		child.on("close", (code) => {
+			if (code === 0) {
+				resolve({ code });
+			} else {
+				reject({ code });
+			}
+		});
+	});
 }
 
 export function getArduinoL4jCodepage(filePath: string): string | undefined {
-    const encoding = parseConfigFile(filePath).get("-Dfile.encoding");
-    if (encoding === "UTF8") {
-        return "65001";
-    }
-    return Object.keys(encodingMapping).reduce((r, key) => {
-        return encodingMapping[key] === encoding ? key : r;
-    }, undefined);
+	const encoding = parseConfigFile(filePath).get("-Dfile.encoding");
+	if (encoding === "UTF8") {
+		return "65001";
+	}
+	return Object.keys(encodingMapping).reduce((r, key) => {
+		return encodingMapping[key] === encoding ? key : r;
+	}, undefined);
 }
 
 export function decodeData(data: Buffer, codepage: string): string {
-    if (Object.prototype.hasOwnProperty.call(encodingMapping, codepage)) {
-        return iconv.decode(data, encodingMapping[codepage]);
-    }
-    return data.toString();
+	if (Object.prototype.hasOwnProperty.call(encodingMapping, codepage)) {
+		return iconv.decode(data, encodingMapping[codepage]);
+	}
+	return data.toString();
 }
 
 export function tryParseJSON(jsonString: string) {
-    try {
-        const jsonObj = JSON.parse(jsonString);
-        if (jsonObj && typeof jsonObj === "object") {
-            return jsonObj;
-        }
-    } catch (ex) { }
+	try {
+		const jsonObj = JSON.parse(jsonString);
+		if (jsonObj && typeof jsonObj === "object") {
+			return jsonObj;
+		}
+	} catch (ex) {}
 
-    return undefined;
+	return undefined;
 }
 
 export function isJunk(filename: string): boolean {
-    // tslint:disable-next-line
-    const re = /^npm-debug\.log$|^\..*\.swp$|^\.DS_Store$|^\.AppleDouble$|^\.LSOverride$|^Icon\r$|^\._.*|^\.Spotlight-V100(?:$|\/)|\.Trashes|^__MACOSX$|~$|^Thumbs\.db$|^ehthumbs\.db$|^Desktop\.ini$/;
-    return re.test(filename);
+	// tslint:disable-next-line
+	const re =
+		/^npm-debug\.log$|^\..*\.swp$|^\.DS_Store$|^\.AppleDouble$|^\.LSOverride$|^Icon\r$|^\._.*|^\.Spotlight-V100(?:$|\/)|\.Trashes|^__MACOSX$|~$|^Thumbs\.db$|^ehthumbs\.db$|^Desktop\.ini$/;
+	return re.test(filename);
 }
 
 export function filterJunk(files: any[]): any[] {
-    return files.filter((file) => !isJunk(file));
+	return files.filter((file) => !isJunk(file));
 }
 
 export function parseProperties(propertiesFile: string): Thenable<object> {
-    return new Promise((resolve, reject) => {
-        properties.parse(propertiesFile, { path: true }, (error, obj) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(obj);
-            }
-        });
-    });
+	return new Promise((resolve, reject) => {
+		properties.parse(propertiesFile, { path: true }, (error, obj) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(obj);
+			}
+		});
+	});
 }
 
 export function formatVersion(version: string): string {
-    if (!version) {
-        return version;
-    }
-    const versions = String(version).split(".");
-    if (versions.length < 2) {
-        versions.push("0");
-    }
-    if (versions.length < 3) {
-        versions.push("0");
-    }
-    return versions.join(".");
+	if (!version) {
+		return version;
+	}
+	const versions = String(version).split(".");
+	if (versions.length < 2) {
+		versions.push("0");
+	}
+	if (versions.length < 3) {
+		versions.push("0");
+	}
+	return versions.join(".");
 }
 
 export function trim(value: any) {
-    if (Array.isArray(value)) {
-        for (let i = 0; i < value.length; i++) {
-            value[i] = trim(value[i]);
-        }
-    } else if (typeof value === "string") {
-        value = value.trim();
-    }
-    return value;
+	if (Array.isArray(value)) {
+		for (let i = 0; i < value.length; i++) {
+			value[i] = trim(value[i]);
+		}
+	} else if (typeof value === "string") {
+		value = value.trim();
+	}
+	return value;
 }
 
 export function union(a: any[], b: any[], compare?: (item1, item2) => boolean) {
-    const result = [].concat(a);
-    b.forEach((item) => {
-        const exist = result.find((element) => {
-            return (compare ? compare(item, element) : Object.is(item, element));
-        });
-        if (!exist) {
-            result.push(item);
-        }
-    });
-    return result;
+	const result = [].concat(a);
+	b.forEach((item) => {
+		const exist = result.find((element) => {
+			return compare ? compare(item, element) : Object.is(item, element);
+		});
+		if (!exist) {
+			result.push(item);
+		}
+	});
+	return result;
 }
 
 /**
@@ -356,86 +372,99 @@ export function union(a: any[], b: any[], compare?: (item1, item2) => boolean) {
  * @argument {string} targetLength
  * @argument {string} padString
  */
-export function padStart(sourceString: string, targetLength: number, padString?: string): string {
-    if (!sourceString) {
-        return sourceString;
-    }
+export function padStart(
+	sourceString: string,
+	targetLength: number,
+	padString?: string,
+): string {
+	if (!sourceString) {
+		return sourceString;
+	}
 
-    if (!(String.prototype as any).padStart) {
-        // https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
-        padString = String(padString || " ");
-        if (sourceString.length > targetLength) {
-            return sourceString;
-        } else {
-            targetLength = targetLength - sourceString.length;
-            if (targetLength > padString.length) {
-                padString += padString.repeat(targetLength / padString.length); // append to original to ensure we are longer than needed
-            }
-            return padString.slice(0, targetLength) + sourceString;
-        }
-    } else {
-        return (sourceString as any).padStart(targetLength, padString);
-    }
+	if (!(String.prototype as any).padStart) {
+		// https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
+		padString = String(padString || " ");
+		if (sourceString.length > targetLength) {
+			return sourceString;
+		} else {
+			targetLength = targetLength - sourceString.length;
+			if (targetLength > padString.length) {
+				padString += padString.repeat(targetLength / padString.length); // append to original to ensure we are longer than needed
+			}
+			return padString.slice(0, targetLength) + sourceString;
+		}
+	} else {
+		return (sourceString as any).padStart(targetLength, padString);
+	}
 }
 
-export function parseConfigFile(fullFileName, filterComment: boolean = true): Map<string, string> {
-    const result = new Map<string, string>();
+export function parseConfigFile(
+	fullFileName,
+	filterComment: boolean = true,
+): Map<string, string> {
+	const result = new Map<string, string>();
 
-    if (fileExistsSync(fullFileName)) {
-        const rawText = fs.readFileSync(fullFileName, "utf8");
-        const lines = rawText.split("\n");
-        lines.forEach((line) => {
-            if (line) {
-                line = line.trim();
-                if (filterComment) {
-                    if (line.trim() && line.startsWith("#")) {
-                        return;
-                    }
-                }
-                const separator = line.indexOf("=");
-                if (separator > 0) {
-                    const key = line.substring(0, separator).trim();
-                    const value = line.substring(separator + 1, line.length).trim();
-                    result.set(key, value);
-                }
-            }
-        });
-    }
-    return result;
+	if (fileExistsSync(fullFileName)) {
+		const rawText = fs.readFileSync(fullFileName, "utf8");
+		const lines = rawText.split("\n");
+		lines.forEach((line) => {
+			if (line) {
+				line = line.trim();
+				if (filterComment) {
+					if (line.trim() && line.startsWith("#")) {
+						return;
+					}
+				}
+				const separator = line.indexOf("=");
+				if (separator > 0) {
+					const key = line.substring(0, separator).trim();
+					const value = line
+						.substring(separator + 1, line.length)
+						.trim();
+					result.set(key, value);
+				}
+			}
+		});
+	}
+	return result;
 }
 
-export function getRegistryValues(hive: string, key: string, name: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        try {
-            const regKey = new WinReg({
-                hive,
-                key,
-            });
+export function getRegistryValues(
+	hive: string,
+	key: string,
+	name: string,
+): Promise<string> {
+	return new Promise((resolve, reject) => {
+		try {
+			const regKey = new WinReg({
+				hive,
+				key,
+			});
 
-            regKey.valueExists(name, (e, exists) => {
-                if (e) {
-                    return reject(e);
-                }
-                if (exists) {
-                    regKey.get(name, (err, result) => {
-                        if (!err) {
-                            resolve(result ? result.value : "");
-                        } else {
-                            reject(err);
-                        }
-                    });
-                } else {
-                    resolve("");
-                }
-            });
-        } catch (ex) {
-            reject(ex);
-        }
-    });
+			regKey.valueExists(name, (e, exists) => {
+				if (e) {
+					return reject(e);
+				}
+				if (exists) {
+					regKey.get(name, (err, result) => {
+						if (!err) {
+							resolve(result ? result.value : "");
+						} else {
+							reject(err);
+						}
+					});
+				} else {
+					resolve("");
+				}
+			});
+		} catch (ex) {
+			reject(ex);
+		}
+	});
 }
 
 export function convertToHex(number, width = 0) {
-    return padStart(number.toString(16), width, "0");
+	return padStart(number.toString(16), width, "0");
 }
 
 /**
@@ -443,12 +472,15 @@ export function convertToHex(number, width = 0) {
  * in case you named Arduino with a version number
  * @argument {string} arduinoPath
  */
-export function resolveMacArduinoAppPath(arduinoPath: string, useArduinoCli = false): string {
-    if (useArduinoCli || /Arduino.*\.app/.test(arduinoPath)) {
-        return arduinoPath;
-    } else {
-        return path.join(arduinoPath, "Arduino.app");
-    }
+export function resolveMacArduinoAppPath(
+	arduinoPath: string,
+	useArduinoCli = false,
+): string {
+	if (useArduinoCli || /Arduino.*\.app/.test(arduinoPath)) {
+		return arduinoPath;
+	} else {
+		return path.join(arduinoPath, "Arduino.app");
+	}
 }
 
 /**
@@ -458,19 +490,19 @@ export function resolveMacArduinoAppPath(arduinoPath: string, useArduinoCli = fa
  * @returns Array of strings split from the input.
  */
 export function toStringArray(value: string | string[]): string[] {
-    if (value) {
-        let result: string[];
+	if (value) {
+		let result: string[];
 
-        if (typeof value === "string") {
-            result = value.split(",");
-        } else {
-            result = <string[]>value;
-        }
+		if (typeof value === "string") {
+			result = value.split(",");
+		} else {
+			result = <string[]>value;
+		}
 
-        return trim(result);
-    }
+		return trim(result);
+	}
 
-    return [];
+	return [];
 }
 
 // Ideally VS Code would provide an API to get the target platform name. For
@@ -479,25 +511,28 @@ export function toStringArray(value: string | string[]): string[] {
 // tslint:disable-next-line
 // https://github.com/microsoft/vscode/blob/78d05ca56a6881e7503a5173131c9803b059012d/src/vs/platform/extensionManagement/common/extensionManagementUtil.ts#L171-L196
 export async function getPlatform(): Promise<string> {
-    let platform: string = process.platform;
-    if (platform === "linux") {
-        let content: string | undefined;
-        try {
-            content = await fs.promises.readFile("/etc/os-release", "ascii");
-        } catch (error) {
-            try {
-                content = await fs.promises.readFile("/usr/lib/os-release", "ascii");
-            } catch (error) {
-                /* Ignore */
-            }
-        }
-        if (
-            !!content &&
-            // eslint-disable-next-line no-control-regex
-            (content.match(/^ID=([^\u001b\r\n]*)/m) || [])[1] === "alpine"
-        ) {
-            platform = "alpine";
-        }
-    }
-    return `${platform}-${process.arch}`;
+	let platform: string = process.platform;
+	if (platform === "linux") {
+		let content: string | undefined;
+		try {
+			content = await fs.promises.readFile("/etc/os-release", "ascii");
+		} catch (error) {
+			try {
+				content = await fs.promises.readFile(
+					"/usr/lib/os-release",
+					"ascii",
+				);
+			} catch (error) {
+				/* Ignore */
+			}
+		}
+		if (
+			!!content &&
+			// eslint-disable-next-line no-control-regex
+			(content.match(/^ID=([^\u001b\r\n]*)/m) || [])[1] === "alpine"
+		) {
+			platform = "alpine";
+		}
+	}
+	return `${platform}-${process.arch}`;
 }
