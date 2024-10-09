@@ -8,10 +8,11 @@
 
 const path = process.argv[2];
 const expected = process.argv[3];
-const data = require('fs').readFileSync(path);
-const hash = require('crypto').createHash('sha256').update(data).digest('hex');
+const data = require("fs").readFileSync(path);
+const hash = require("crypto").createHash("sha256").update(data).digest("hex");
 if (hash !== expected) {
-    console.error(
-        `Expected SHA-256 of "${path}" to be ${expected} but found ${hash}.`);
-    process.exit(1);
+	console.error(
+		`Expected SHA-256 of "${path}" to be ${expected} but found ${hash}.`,
+	);
+	process.exit(1);
 }
