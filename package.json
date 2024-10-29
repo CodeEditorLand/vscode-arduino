@@ -301,14 +301,14 @@
 		"properties": "1.2.1",
 		"strftime": "0.10.3",
 		"usb-detection": "4.14.2",
-		"uuid": "11.0.1",
+		"uuid": "11.0.2",
 		"winreg": "1.2.5",
 		"winston": "3.15.0"
 	},
 	"description": "Arduino for Visual Studio Code. This extension is deprecated and no longer maintained.",
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/node": "22.8.1",
+		"@types/node": "22.8.2",
 		"@types/strftime": "0.9.8",
 		"@types/uuid": "10.0.0",
 		"@types/winreg": "1.2.36",
