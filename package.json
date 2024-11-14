@@ -301,9 +301,9 @@
 		"properties": "1.2.1",
 		"strftime": "0.10.3",
 		"usb-detection": "4.14.2",
-		"uuid": "11.0.2",
+		"uuid": "11.0.3",
 		"winreg": "1.2.5",
-		"winston": "3.16.0"
+		"winston": "3.17.0"
 	},
 	"description": "Arduino for Visual Studio Code. This extension is deprecated and no longer maintained.",
 	"devDependencies": {
