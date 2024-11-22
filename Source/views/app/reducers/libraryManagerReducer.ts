@@ -23,8 +23,10 @@ export default function libraryManagerReducer(state = initalState, action) {
 				requesting: true,
 				errorMessage: "",
 			};
+
 		case actions.LIBRARIES_SUCCESS: {
 			const types = util.parseGroups(action.libraries, "types");
+
 			const categories = util.parseGroups(action.libraries, (item) => {
 				return item.category || "Uncategorized";
 			});
@@ -51,16 +53,19 @@ export default function libraryManagerReducer(state = initalState, action) {
 				requesting: false,
 				errorMessage: action.errorMessage,
 			};
+
 		case actions.INSTALL_LIBRARY_REQUEST:
 			return {
 				...state,
 				installingLibraryName: action.libraryName,
 			};
+
 		case actions.INSTALL_LIBRARY_SUCCESS:
 			return {
 				...state,
 				installingLibraryName: "",
 			};
+
 		case actions.INSTALL_LIBRARY_FAILURE:
 			return {
 				...state,
@@ -72,16 +77,19 @@ export default function libraryManagerReducer(state = initalState, action) {
 				...state,
 				uninstallingLibraryName: action.libraryName,
 			};
+
 		case actions.UNINSTALL_LIBRARY_SUCCESS:
 			return {
 				...state,
 				uninstallingLibraryName: "",
 			};
+
 		case actions.UNINSTALL_LIBRARY_FAILURE:
 			return {
 				...state,
 				uninstallingLibraryName: "",
 			};
+
 		default:
 			return state;
 	}

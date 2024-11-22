@@ -22,6 +22,7 @@ export default class UserNotificationTransport extends winston.Transport {
 				metadata && metadata.notification
 					? metadata.notification
 					: message;
+
 			if (level === LogLevel.Warn) {
 				vscode.window.showWarningMessage(notification);
 			} else if (level === LogLevel.Error) {
@@ -33,6 +34,7 @@ export default class UserNotificationTransport extends winston.Transport {
 			}
 		}
 		super.emit("logged");
+
 		if (callback) {
 			callback(null, true);
 		}

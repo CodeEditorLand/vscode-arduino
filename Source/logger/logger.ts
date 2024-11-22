@@ -16,6 +16,7 @@ export enum LogLevel {
 function FilterErrorPath(line: string): string {
 	if (line) {
 		const values: string[] = line.split("/out/");
+
 		if (values.length <= 1) {
 			// Didn't match expected format
 			return line;
@@ -75,9 +76,12 @@ function traceErrorOrWarning(
 ) {
 	// use `info` as the log level and add a special flag in metadata
 	let stackArray: string[];
+
 	let firstLine: string = "";
+
 	if (error !== undefined && error.stack !== undefined) {
 		stackArray = error.stack.split("\n");
+
 		if (stackArray !== undefined && stackArray.length >= 2) {
 			firstLine = stackArray[1]; // The fist line is the error message and we don't want to send that telemetry event
 			firstLine = FilterErrorPath(
@@ -107,6 +111,7 @@ export function notifyAndThrowUserError(
 	message?: string,
 ) {
 	notifyUserError(errorCode, error, message);
+
 	throw error;
 }
 
@@ -147,6 +152,7 @@ export class Timer {
 			return -1;
 		} else {
 			const endTime = process.hrtime(this._startTime);
+
 			return endTime[0] * 1000 + endTime[1] / 1000000;
 		}
 	}

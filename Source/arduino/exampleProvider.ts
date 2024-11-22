@@ -36,6 +36,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 	public getChildren(element?: ExampleItem): ExampleItem[] {
 		if (!this._examples) {
 			this.loadData();
+
 			return null;
 		}
 		if (!element) {
@@ -49,6 +50,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 		this._examples = null;
 		this._exampleManager.loadExamples().then((examples) => {
 			this._examples = examples;
+
 			if (!this.hasAnyExamples(this._examples)) {
 				// Reset the examples list to get the welcome message (defined in package.json) to appear.
 				this._examples = [];
@@ -68,6 +70,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 
 	private createExampleItemList(examples: IExampleNode[]): ExampleItem[] {
 		const result = [];
+
 		if (examples && examples.length) {
 			examples.forEach((example) => {
 				result.push(new ExampleItem(example));
@@ -103,6 +106,7 @@ class ExampleItem extends vscode.TreeItem {
 
 	private static getIconUri(uriPath: string) {
 		const dc = DeviceContext.getInstance();
+
 		return vscode.Uri.file(
 			path.join(dc.extensionPath, "images/examples", uriPath),
 		);
@@ -115,6 +119,7 @@ class ExampleItem extends vscode.TreeItem {
 				? vscode.TreeItemCollapsibleState.None
 				: vscode.TreeItemCollapsibleState.Collapsed,
 		);
+
 		if (_example.isLeaf) {
 			this.command = {
 				title: "Open Example",

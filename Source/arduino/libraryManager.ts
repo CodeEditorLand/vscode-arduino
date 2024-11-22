@@ -50,6 +50,7 @@ export class LibraryManager {
 			this._settings.packagePath,
 			"library_index.json",
 		);
+
 		if (update || !util.fileExistsSync(libraryIndexFilePath)) {
 			await this._arduinoApp.initializeLibrary(true);
 		}
@@ -78,7 +79,9 @@ export class LibraryManager {
 			// Arduino install-library program will replace the blank space of the library folder name with underscore,
 			// here format library name consistently for better parsing at the next steps.
 			const formattedName = library.name.replace(/\s+/g, "_");
+
 			const existingLib = this._libraryMap.get(formattedName);
+
 			if (existingLib) {
 				existingLib.versions.push(library.version);
 			} else {
@@ -98,8 +101,10 @@ export class LibraryManager {
 		const installedLibDirs = util.filterJunk(
 			util.readdirSync(libRoot, true),
 		);
+
 		for (const libDir of installedLibDirs) {
 			let sourceLib = null;
+
 			if (
 				util.fileExistsSync(
 					path.join(libRoot, libDir, "library.properties"),
@@ -110,8 +115,10 @@ export class LibraryManager {
 						path.join(libRoot, libDir, "library.properties"),
 					)
 				);
+
 				const formattedName = properties.name.replace(/\s+/g, "_");
 				sourceLib = this._libraryMap.get(formattedName);
+
 				if (!sourceLib) {
 					sourceLib = { ...properties };
 					sourceLib.website = properties.url;
@@ -121,6 +128,7 @@ export class LibraryManager {
 			} else {
 				// For manually imported library, library.properties may be missing. Take the folder name as library name.
 				sourceLib = this._libraryMap.get(libDir);
+
 				if (!sourceLib) {
 					sourceLib = <ILibrary>{
 						name: libDir,
@@ -143,9 +151,12 @@ export class LibraryManager {
 	// Builtin libraries from board packages.
 	private async loadBoardLibraries() {
 		let builtinLibs = [];
+
 		const librarySet = new Set(this._libraryMap.keys());
+
 		const installedPlatforms =
 			this._arduinoApp.boardManager.getInstalledPlatforms();
+
 		for (const board of installedPlatforms) {
 			const libs = await this.parseBoardLibraries(
 				board.rootBoardPath,
@@ -163,16 +174,20 @@ export class LibraryManager {
 		librarySet: Set<any>,
 	) {
 		const builtInLib = [];
+
 		const builtInLibPath = path.join(rootBoardPath, "libraries");
+
 		if (util.directoryExistsSync(builtInLibPath)) {
 			const libDirs = util.filterJunk(
 				util.readdirSync(builtInLibPath, true),
 			);
+
 			if (!libDirs || !libDirs.length) {
 				return builtInLib;
 			}
 			for (const libDir of libDirs) {
 				let sourceLib = <ILibrary>{};
+
 				if (
 					util.fileExistsSync(
 						path.join(builtInLibPath, libDir, "library.properties"),
@@ -217,6 +232,7 @@ export class LibraryManager {
 
 	private tagSupportedLibraries() {
 		const currentBoard = this._arduinoApp.boardManager.currentBoard;
+
 		if (!currentBoard) {
 			return;
 		}

@@ -50,6 +50,7 @@ export default class LocalWebServer {
 			this.server.listen(0, "localhost", (error) => {
 				if (error) {
 					reject(error);
+
 					return;
 				}
 				// tslint:disable-next-line

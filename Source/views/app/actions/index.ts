@@ -240,6 +240,7 @@ export function installBoard(
 	API.installBoard(packageName, arch, version)
 		.then((response) => {
 			dispatch(installBoardSuccess());
+
 			if (callback) {
 				callback();
 			}
@@ -259,6 +260,7 @@ export function uninstallBoard(
 	API.uninstallBoard(boardName, packagePath)
 		.then((response) => {
 			dispatch(uninstallBoardSuccess());
+
 			if (callback) {
 				callback();
 			}
@@ -274,12 +276,14 @@ export function getLibraries(dispatch, update: boolean, callback?: () => void) {
 		.then((response) => {
 			const { libraries } = <any>response;
 			dispatch(librariesSuccess(libraries));
+
 			if (callback) {
 				callback();
 			}
 		})
 		.catch((error) => {
 			dispatch(librariesFailure(error));
+
 			if (callback) {
 				callback();
 			}
@@ -296,12 +300,14 @@ export function installLibrary(
 	API.installLibrary(libraryName, version)
 		.then((response) => {
 			dispatch(installLibrarySuccess(libraryName));
+
 			if (callback) {
 				callback();
 			}
 		})
 		.catch((error) => {
 			dispatch(installLibraryFailure(libraryName, error));
+
 			if (callback) {
 				callback(error);
 			}
@@ -318,12 +324,14 @@ export function uninstallLibrary(
 	API.uninstallLibrary(libraryName, libraryPath)
 		.then((response) => {
 			dispatch(uninstallLibrarySuccess(libraryName));
+
 			if (callback) {
 				callback();
 			}
 		})
 		.catch((error) => {
 			dispatch(uninstallLibraryFailure(libraryName, error));
+
 			if (callback) {
 				callback(error);
 			}
@@ -336,12 +344,14 @@ export function getInstalledBoards(dispatch, callback?: () => void) {
 		.then((response) => {
 			const { installedBoards } = <any>response;
 			dispatch(installedBoardsSuccess(installedBoards));
+
 			if (callback) {
 				callback();
 			}
 		})
 		.catch((error) => {
 			dispatch(installedBoardsFailure(error));
+
 			if (callback) {
 				callback();
 			}
@@ -354,12 +364,14 @@ export function getConfigItems(dispatch, callback?: () => void) {
 		.then((response) => {
 			const { configitems } = <any>response;
 			dispatch(configItemsSuccess(configitems));
+
 			if (callback) {
 				callback();
 			}
 		})
 		.catch((error) => {
 			dispatch(configItemsFailure(error));
+
 			if (callback) {
 				callback();
 			}

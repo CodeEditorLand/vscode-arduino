@@ -20,17 +20,20 @@ class ArduinoActivator {
 	public async activate() {
 		if (this._initializePromise) {
 			await this._initializePromise;
+
 			return;
 		}
 
 		this._initializePromise = (async () => {
 			const arduinoSettings = new ArduinoSettings(this.context);
 			await arduinoSettings.initialize();
+
 			const arduinoApp = new ArduinoApp(arduinoSettings);
 
 			// Initializing the app before the device context will cause a
 			// setting changed event that triggers analysis.
 			const analyzeOnOpen = VscodeSettings.getInstance().analyzeOnOpen;
+
 			if (analyzeOnOpen) {
 				await arduinoApp.initialize();
 			}

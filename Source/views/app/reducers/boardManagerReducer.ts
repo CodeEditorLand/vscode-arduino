@@ -25,6 +25,7 @@ export default function boardManagerReducer(state = initalState, action) {
 				requesting: true,
 				categories: ["All", "Updatable", "Installed"],
 			};
+
 		case actions.BOARD_PACKAGES_SUCCESS: {
 			const categories = util.parseGroups(action.platforms, "category");
 			// Sorting versions in descending order.
@@ -33,6 +34,7 @@ export default function boardManagerReducer(state = initalState, action) {
 					.sort(versionCompare)
 					.reverse();
 			});
+
 			return {
 				...state,
 				errorMessage: "",
@@ -50,42 +52,49 @@ export default function boardManagerReducer(state = initalState, action) {
 				requesting: false,
 				platforms: [],
 			};
+
 		case actions.INSTALL_BOARD_REQUEST:
 			return {
 				...state,
 				installingBoardName: action.boardName,
 				installErrorMessage: "",
 			};
+
 		case actions.INSTALL_BOARD_SUCCESS:
 			return {
 				...state,
 				installingBoardName: "",
 				installErrorMessage: "",
 			};
+
 		case actions.INSTALL_BOARD_FAILURE:
 			return {
 				...state,
 				installingBoardName: "",
 				installErrorMessage: action.errorMessage,
 			};
+
 		case actions.UNINSTALL_BOARD_REQUEST:
 			return {
 				...state,
 				uninstallingBoardName: action.boardName,
 				uninstallErrorMessage: "",
 			};
+
 		case actions.UNINSTALL_BOARD_SUCCESS:
 			return {
 				...state,
 				uninstallingBoardName: "",
 				uninstallErrorMessage: "",
 			};
+
 		case actions.UNINSTALL_BOARD_FAILURE:
 			return {
 				...state,
 				uninstallingBoardName: "",
 				uninstallErrorMessage: action.errorMessage,
 			};
+
 		default:
 			return state;
 	}

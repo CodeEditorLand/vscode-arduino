@@ -106,20 +106,24 @@ class BuildPrefSetting extends Setting<string[][]> {
 	public set value(value: string[][]) {
 		if (!Array.isArray(value)) {
 			super.value = super.default;
+
 			return;
 		}
 		if (value.length <= 0) {
 			super.value = super.default;
+
 			return;
 		}
 		for (const pref of value) {
 			if (!Array.isArray(pref) || pref.length !== 2) {
 				super.value = super.default;
+
 				return;
 			}
 			for (const i of pref) {
 				if (typeof i !== "string") {
 					super.value = super.default;
+
 					return;
 				}
 			}
@@ -193,6 +197,7 @@ export class DeviceSettings {
 		this.postbuild.reset();
 		this.programmer.reset();
 		this.buildPreferences.reset();
+
 		if (commit) {
 			this.commit();
 		}
@@ -207,6 +212,7 @@ export class DeviceSettings {
 	 */
 	public load(file: string, commit: boolean = true) {
 		const settings = util.tryParseJSON(fs.readFileSync(file, "utf8"));
+
 		if (settings) {
 			this.port.value = settings.port;
 			this.board.value = settings.board;
@@ -218,6 +224,7 @@ export class DeviceSettings {
 			this.postbuild.value = settings.postbuild;
 			this.programmer.value = settings.programmer;
 			this.buildPreferences.value = settings.buildPreferences;
+
 			if (commit) {
 				this.commit();
 			}
@@ -227,6 +234,7 @@ export class DeviceSettings {
 				"arduinoFileError",
 				new Error(constants.messages.ARDUINO_FILE_ERROR),
 			);
+
 			return false;
 		}
 	}
@@ -245,6 +253,7 @@ export class DeviceSettings {
 		}
 
 		let settings: any = {};
+
 		if (util.fileExistsSync(file)) {
 			settings = util.tryParseJSON(fs.readFileSync(file, "utf8"));
 		}
@@ -253,15 +262,22 @@ export class DeviceSettings {
 				"arduinoFileError",
 				new Error(constants.messages.ARDUINO_FILE_ERROR),
 			);
+
 			return false;
 		}
 
 		settings.sketch = this.sketch.value;
+
 		settings.port = this.port.value;
+
 		settings.board = this.board.value;
+
 		settings.output = this.output.value;
+
 		settings.intelliSenseGen = this.intelliSenseGen.value;
+
 		settings.configuration = this.configuration.value;
+
 		settings.programmer = this.programmer.value;
 
 		util.mkdirRecursivelySync(path.dirname(file));

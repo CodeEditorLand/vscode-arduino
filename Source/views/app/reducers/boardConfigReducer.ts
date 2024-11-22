@@ -16,6 +16,7 @@ export default function boardConfigReducer(state = initalState, action) {
 				...state,
 				errorMessage: "",
 			};
+
 		case actions.INSTALLED_BOARDS_SUCCESS: {
 			return {
 				...state,
@@ -29,23 +30,27 @@ export default function boardConfigReducer(state = initalState, action) {
 				errorMessage: action.errorMessage,
 				installedBoards: [],
 			};
+
 		case actions.CONFIGITEMS_REQUEST:
 			return {
 				...state,
 				errorMessage: "",
 			};
+
 		case actions.CONFIGITEMS_SUCCESS:
 			return {
 				...state,
 				errorMessage: "",
 				configitems: action.configitems,
 			};
+
 		case actions.CONFIGITEMS_FAILURE:
 			return {
 				...state,
 				errorMessage: action.errorMessage,
 				configitems: [],
 			};
+
 		default:
 			return state;
 	}

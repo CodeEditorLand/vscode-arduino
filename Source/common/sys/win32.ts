@@ -16,11 +16,13 @@ export async function resolveArduinoPath() {
 	const isWin64 =
 		process.arch === "x64" ||
 		process.env.hasOwnProperty("PROCESSOR_ARCHITEW6432");
+
 	let pathString = await getRegistryValues(
 		WinReg.HKLM,
 		isWin64 ? "\\SOFTWARE\\WOW6432Node\\Arduino" : "\\SOFTWARE\\Arduino",
 		"Install_Dir",
 	);
+
 	if (directoryExistsSync(pathString)) {
 		return pathString;
 	}
@@ -29,6 +31,7 @@ export async function resolveArduinoPath() {
 			encoding: "utf8",
 		});
 		pathString = path.resolve(pathString).trim();
+
 		if (fileExistsSync(pathString)) {
 			pathString = path.dirname(path.resolve(pathString));
 		}
@@ -53,10 +56,12 @@ export function validateArduinoPath(
 
 export function findFile(fileName: string, cwd: string): string {
 	let result;
+
 	try {
 		const pathString = childProcess
 			.execSync(`dir ${fileName} /S /B`, { encoding: "utf8", cwd })
 			.split("\n");
+
 		if (
 			pathString &&
 			pathString[0] &&

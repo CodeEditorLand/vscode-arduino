@@ -8,11 +8,13 @@ import { fileExistsSync } from "../util";
 
 export function resolveArduinoPath(): string {
 	let pathString;
+
 	try {
 		pathString = childProcess.execSync("readlink -f $(which arduino)", {
 			encoding: "utf8",
 		});
 		pathString = path.resolve(pathString).trim();
+
 		if (fileExistsSync(pathString)) {
 			pathString = path.dirname(path.resolve(pathString));
 		}
@@ -34,6 +36,7 @@ export function validateArduinoPath(
 
 export function findFile(fileName: string, cwd: string): string {
 	let pathString;
+
 	try {
 		pathString = childProcess
 			.execSync(`find ${cwd} -name ${fileName} -type f`, {

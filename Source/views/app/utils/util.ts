@@ -5,18 +5,21 @@ export function parseGroups(sourceArray: any[], key): any[] {
 	const groups = {};
 	sourceArray.forEach((item) => {
 		let groupName = null;
+
 		if (key instanceof Function) {
 			groupName = key(item);
 		} else {
 			groupName = item[key];
 		}
 		groupName = [].concat(groupName);
+
 		for (const group of groupName) {
 			if (group && !groups[group]) {
 				groups[group] = true;
 			}
 		}
 	});
+
 	return Object.keys(groups);
 }
 
@@ -35,10 +38,12 @@ export function shallowEqual(objA, objB, keys?: any[]) {
 	}
 
 	let keysA = Object.keys(objA);
+
 	if (keys) {
 		keysA = keys;
 	} else {
 		const keysB = Object.keys(objB);
+
 		if (keysA.length !== keysB.length) {
 			return false;
 		}

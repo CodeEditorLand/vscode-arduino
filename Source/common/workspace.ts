@@ -10,16 +10,19 @@ import { ARDUINO_CONFIG_FILE } from "./constants";
 export class ArduinoWorkspace {
 	static get rootPath(): string | undefined {
 		const workspaceFolders = vscode.workspace.workspaceFolders;
+
 		if (!workspaceFolders || workspaceFolders.length === 0) {
 			return undefined;
 		}
 
 		for (const workspaceFolder of workspaceFolders) {
 			const workspaceFolderPath = workspaceFolder.uri.fsPath;
+
 			const arduinoConfigPath = path.join(
 				workspaceFolderPath,
 				ARDUINO_CONFIG_FILE,
 			);
+
 			if (fs.existsSync(arduinoConfigPath)) {
 				return workspaceFolderPath;
 			}

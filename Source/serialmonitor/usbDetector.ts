@@ -17,6 +17,7 @@ import * as Logger from "../logger/logger";
 import { SerialMonitor } from "./serialMonitor";
 
 const HTML_EXT = ".html";
+
 const MARKDOWN_EXT = ".md";
 
 export class UsbDetector {
@@ -47,6 +48,7 @@ export class UsbDetector {
 	public async startListening() {
 		const enableUSBDetection =
 			VscodeSettings.getInstance().enableUSBDetection;
+
 		if (os.platform() === "linux" || !enableUSBDetection) {
 			return;
 		}
@@ -74,6 +76,7 @@ export class UsbDetector {
 				}
 				const boardKey = `${deviceDescriptor.package}:${deviceDescriptor.architecture}:${deviceDescriptor.id}`;
 				Logger.traceUserData("detected a board", { board: boardKey });
+
 				if (!ArduinoContext.initialized) {
 					await ArduinoActivator.activate();
 				}
@@ -87,7 +90,9 @@ export class UsbDetector {
 
 				let bd =
 					ArduinoContext.boardManager.installedBoards.get(boardKey);
+
 				const openEditor = vscode.window.activeTextEditor;
+
 				if (
 					ArduinoWorkspace.rootPath &&
 					(util.fileExistsSync(
@@ -106,6 +111,7 @@ export class UsbDetector {
 								const ignoreBoards =
 									VscodeSettings.getInstance().ignoreBoards ||
 									[];
+
 								if (
 									ignoreBoards.indexOf(
 										deviceDescriptor.name,
@@ -162,6 +168,7 @@ export class UsbDetector {
 					} else if (ArduinoContext.boardManager.currentBoard) {
 						const currBoard =
 							ArduinoContext.boardManager.currentBoard;
+
 						if (
 							currBoard.board !== deviceDescriptor.id ||
 							currBoard.platform.architecture !==
@@ -171,6 +178,7 @@ export class UsbDetector {
 						) {
 							const ignoreBoards =
 								VscodeSettings.getInstance().ignoreBoards || [];
+
 							if (
 								ignoreBoards.indexOf(deviceDescriptor.name) >= 0
 							) {
@@ -235,6 +243,7 @@ export class UsbDetector {
 		showReadMe: boolean = true,
 	) {
 		ArduinoContext.boardManager.doChangeBoardType(bd);
+
 		if (showReadMe) {
 			this.showReadMeAndExample(deviceDescriptor.readme);
 		}
@@ -243,6 +252,7 @@ export class UsbDetector {
 	private showReadMeAndExample(readme: string | undefined) {
 		if (ArduinoContext.boardManager.currentBoard) {
 			let readmeFilePath = "";
+
 			if (readme) {
 				readmeFilePath = path.join(
 					ArduinoContext.boardManager.currentBoard.platform
@@ -258,6 +268,7 @@ export class UsbDetector {
 				);
 			}
 			vscode.commands.executeCommand("arduino.showExamples", true);
+
 			if (util.fileExistsSync(readmeFilePath)) {
 				if (readmeFilePath.endsWith(MARKDOWN_EXT)) {
 					vscode.commands.executeCommand(
@@ -290,10 +301,12 @@ export class UsbDetector {
 	): any {
 		if (!this._boardDescriptors) {
 			this._boardDescriptors = [];
+
 			const fileContent = fs.readFileSync(
 				path.join(extensionRoot, "misc", "usbmapping.json"),
 				"utf8",
 			);
+
 			const boardIndexes = JSON.parse(fileContent);
 			boardIndexes.forEach((boardIndex) => {
 				boardIndex.boards.forEach(

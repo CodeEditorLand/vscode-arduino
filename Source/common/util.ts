@@ -57,6 +57,7 @@ export function readdirSync(
 	folderOnly: boolean = false,
 ): string[] {
 	const dirs = fs.readdirSync(dirPath);
+
 	if (folderOnly) {
 		return dirs.filter((subdir) => {
 			return directoryExistsSync(path.join(dirPath, subdir));
@@ -76,6 +77,7 @@ export function mkdirRecursivelySync(dirPath: string): void {
 		return;
 	}
 	const dirname = path.dirname(dirPath);
+
 	if (path.normalize(dirname) === path.normalize(dirPath)) {
 		fs.mkdirSync(dirPath);
 	} else if (directoryExistsSync(dirname)) {
@@ -95,6 +97,7 @@ export function rmdirRecursivelySync(rootPath: string): void {
 	if (fs.existsSync(rootPath)) {
 		fs.readdirSync(rootPath).forEach((file) => {
 			const curPath = path.join(rootPath, file);
+
 			if (fs.lstatSync(curPath).isDirectory()) {
 				// recurse
 				rmdirRecursivelySync(curPath);
@@ -112,10 +115,15 @@ function copyFileSync(src, dest, overwrite: boolean = true) {
 		return;
 	}
 	const BUF_LENGTH = 64 * 1024;
+
 	const buf = new Buffer(BUF_LENGTH);
+
 	let lastBytes = BUF_LENGTH;
+
 	let pos = 0;
+
 	let srcFd = null;
+
 	let destFd = null;
 
 	try {
@@ -151,9 +159,12 @@ function copyFolderRecursivelySync(src, dest) {
 	}
 
 	const items = fs.readdirSync(src);
+
 	for (const item of items) {
 		const fullPath = path.join(src, item);
+
 		const targetPath = path.join(dest, item);
+
 		if (directoryExistsSync(fullPath)) {
 			copyFolderRecursivelySync(fullPath, targetPath);
 		} else if (fileExistsSync(fullPath)) {
@@ -170,6 +181,7 @@ function copyFolderRecursivelySync(src, dest) {
 export function cp(src, dest) {
 	if (fileExistsSync(src)) {
 		let targetFile = dest;
+
 		if (directoryExistsSync(dest)) {
 			targetFile = path.join(dest, path.basename(src));
 		}
@@ -216,13 +228,16 @@ export function spawn(
 ): Thenable<object> {
 	return new Promise((resolve, reject) => {
 		options.cwd = options.cwd || path.resolve(path.join(__dirname, ".."));
+
 		const child = child_process.spawn(command, args, options);
 
 		let codepage = "65001";
+
 		if (os.platform() === "win32") {
 			codepage = getArduinoL4jCodepage(
 				command.replace(/.exe$/i, ".l4j.ini"),
 			);
+
 			if (!codepage) {
 				try {
 					const chcp = child_process.execSync("chcp.com");
@@ -239,6 +254,7 @@ export function spawn(
 			if (output.channel || output.stdout) {
 				child.stdout.on("data", (data: Buffer) => {
 					const decoded = decodeData(data, codepage);
+
 					if (output.stdout) {
 						output.stdout(decoded);
 					}
@@ -250,6 +266,7 @@ export function spawn(
 			if (output.channel || output.stderr) {
 				child.stderr.on("data", (data: Buffer) => {
 					const decoded = decodeData(data, codepage);
+
 					if (output.stderr) {
 						output.stderr(decoded);
 					}
@@ -277,6 +294,7 @@ export function spawn(
 
 export function getArduinoL4jCodepage(filePath: string): string | undefined {
 	const encoding = parseConfigFile(filePath).get("-Dfile.encoding");
+
 	if (encoding === "UTF8") {
 		return "65001";
 	}
@@ -295,6 +313,7 @@ export function decodeData(data: Buffer, codepage: string): string {
 export function tryParseJSON(jsonString: string) {
 	try {
 		const jsonObj = JSON.parse(jsonString);
+
 		if (jsonObj && typeof jsonObj === "object") {
 			return jsonObj;
 		}
@@ -307,6 +326,7 @@ export function isJunk(filename: string): boolean {
 	// tslint:disable-next-line
 	const re =
 		/^npm-debug\.log$|^\..*\.swp$|^\.DS_Store$|^\.AppleDouble$|^\.LSOverride$|^Icon\r$|^\._.*|^\.Spotlight-V100(?:$|\/)|\.Trashes|^__MACOSX$|~$|^Thumbs\.db$|^ehthumbs\.db$|^Desktop\.ini$/;
+
 	return re.test(filename);
 }
 
@@ -331,6 +351,7 @@ export function formatVersion(version: string): string {
 		return version;
 	}
 	const versions = String(version).split(".");
+
 	if (versions.length < 2) {
 		versions.push("0");
 	}
@@ -357,10 +378,12 @@ export function union(a: any[], b: any[], compare?: (item1, item2) => boolean) {
 		const exist = result.find((element) => {
 			return compare ? compare(item, element) : Object.is(item, element);
 		});
+
 		if (!exist) {
 			result.push(item);
 		}
 	});
+
 	return result;
 }
 
@@ -384,10 +407,12 @@ export function padStart(
 	if (!(String.prototype as any).padStart) {
 		// https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
 		padString = String(padString || " ");
+
 		if (sourceString.length > targetLength) {
 			return sourceString;
 		} else {
 			targetLength = targetLength - sourceString.length;
+
 			if (targetLength > padString.length) {
 				padString += padString.repeat(targetLength / padString.length); // append to original to ensure we are longer than needed
 			}
@@ -406,18 +431,22 @@ export function parseConfigFile(
 
 	if (fileExistsSync(fullFileName)) {
 		const rawText = fs.readFileSync(fullFileName, "utf8");
+
 		const lines = rawText.split("\n");
 		lines.forEach((line) => {
 			if (line) {
 				line = line.trim();
+
 				if (filterComment) {
 					if (line.trim() && line.startsWith("#")) {
 						return;
 					}
 				}
 				const separator = line.indexOf("=");
+
 				if (separator > 0) {
 					const key = line.substring(0, separator).trim();
+
 					const value = line
 						.substring(separator + 1, line.length)
 						.trim();
@@ -512,8 +541,10 @@ export function toStringArray(value: string | string[]): string[] {
 // https://github.com/microsoft/vscode/blob/78d05ca56a6881e7503a5173131c9803b059012d/src/vs/platform/extensionManagement/common/extensionManagementUtil.ts#L171-L196
 export async function getPlatform(): Promise<string> {
 	let platform: string = process.platform;
+
 	if (platform === "linux") {
 		let content: string | undefined;
+
 		try {
 			content = await fs.promises.readFile("/etc/os-release", "ascii");
 		} catch (error) {

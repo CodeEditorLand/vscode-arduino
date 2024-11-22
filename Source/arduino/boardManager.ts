@@ -59,6 +59,7 @@ export class BoardManager {
 		this._installedPlatforms = [];
 
 		const additionalUrls = this._arduinoApp.getAdditionalUrls();
+
 		if (update) {
 			// Update index files.
 			await this.setPreferenceUrls(additionalUrls);
@@ -67,9 +68,12 @@ export class BoardManager {
 
 		// Parse package index files.
 		const indexFiles = ["package_index.json"].concat(additionalUrls);
+
 		const rootPackageFolder = this._settings.packagePath;
+
 		for (const indexFile of indexFiles) {
 			const indexFileName = this.getIndexFileName(indexFile);
+
 			if (!indexFileName) {
 				continue;
 			}
@@ -108,10 +112,12 @@ export class BoardManager {
 
 	public async changeBoardType() {
 		const supportedBoardTypes = this.listBoards();
+
 		if (supportedBoardTypes.length === 0) {
 			vscode.window.showInformationMessage(
 				"No supported board is available.",
 			);
+
 			return;
 		}
 		// TODO:? Add separator item between different platforms.
@@ -137,6 +143,7 @@ export class BoardManager {
 				}),
 			{ placeHolder: "Select board type" },
 		);
+
 		if (chosen && chosen.label) {
 			this.doChangeBoardType((<any>chosen).entry);
 		}
@@ -144,6 +151,7 @@ export class BoardManager {
 
 	public async updatePackageIndex(indexUri: string): Promise<boolean> {
 		let allUrls = this._arduinoApp.getAdditionalUrls();
+
 		if (!(allUrls.indexOf(indexUri) >= 0)) {
 			allUrls = allUrls.concat(indexUri);
 			VscodeSettings.getInstance().updateAdditionalUrls(allUrls);
@@ -209,6 +217,7 @@ export class BoardManager {
 					_plat.architecture === plat.architecture
 				);
 			});
+
 			if (!find) {
 				installedPlatforms.push(plat);
 			} else {
@@ -219,6 +228,7 @@ export class BoardManager {
 		};
 
 		const customPlatforms = this.getCustomPlatforms();
+
 		const manuallyInstalled = this.getManuallyInstalledPlatforms();
 
 		customPlatforms.forEach(mergePlatform);
@@ -229,6 +239,7 @@ export class BoardManager {
 
 	public loadPackageContent(indexFile: string): void {
 		const indexFileName = this.getIndexFileName(indexFile);
+
 		if (
 			!util.fileExistsSync(
 				path.join(this._settings.packagePath, indexFileName),
@@ -240,16 +251,19 @@ export class BoardManager {
 			path.join(this._settings.packagePath, indexFileName),
 			"utf8",
 		);
+
 		if (!packageContent) {
 			return;
 		}
 
 		let rawModel = null;
+
 		try {
 			rawModel = JSON.parse(packageContent);
 		} catch (ex) {
 			arduinoChannel.error(`Invalid json file "${path.join(this._settings.packagePath, indexFileName)}".
             Suggest to remove it manually and allow boardmanager to re-download it.`);
+
 			return;
 		}
 
@@ -262,11 +276,13 @@ export class BoardManager {
 		rawModel.packages.forEach((pkg) => {
 			pkg.platforms.forEach((plat) => {
 				plat.package = pkg;
+
 				const addedPlatform = this._platforms.find(
 					(_plat) =>
 						_plat.architecture === plat.architecture &&
 						_plat.package.name === plat.package.name,
 				);
+
 				if (addedPlatform) {
 					// union boards from all versions.
 					// We should not union boards: https://github.com/Microsoft/vscode-arduino/issues/414
@@ -282,6 +298,7 @@ export class BoardManager {
 					addedPlatform.versions.push(plat.version);
 					// Check if this is the latest version. Platforms typically support more boards in later versions.
 					addedPlatform.versions.sort(versionCompare);
+
 					if (
 						plat.version ===
 						addedPlatform.versions[
@@ -310,6 +327,7 @@ export class BoardManager {
 		);
 
 		const allVersion = util.filterJunk(util.readdirSync(archPath, true));
+
 		if (allVersion && allVersion.length) {
 			const newPlatform = {
 				packageName: pkgName,
@@ -325,8 +343,10 @@ export class BoardManager {
 					_plat.architecture === arch
 				);
 			});
+
 			if (existingPlatform) {
 				existingPlatform.defaultPlatform = newPlatform.defaultPlatform;
+
 				if (!existingPlatform.installedVersion) {
 					existingPlatform.installedVersion = newPlatform.version;
 					existingPlatform.rootBoardPath = newPlatform.rootBoardPath;
@@ -341,6 +361,7 @@ export class BoardManager {
 	private updateStatusBar(show: boolean = true): void {
 		if (show) {
 			this._boardConfigStatusBar.show();
+
 			if (this._currentBoard) {
 				this._boardConfigStatusBar.text = this._currentBoard.name;
 			} else {
@@ -358,17 +379,21 @@ export class BoardManager {
 	 */
 	private onDeviceContextBoardChange() {
 		const dc = DeviceContext.getInstance();
+
 		const newBoard = this._boards.get(dc.board);
+
 		if (boardEqual(newBoard, this._currentBoard)) {
 			return;
 		}
 		if (newBoard) {
 			this._currentBoard = newBoard;
+
 			if (dc.configuration) {
 				// In case the configuration is incompatible, we reset it as
 				// setting partially valid configurations can lead to nasty
 				// surprises. When setting a new board this is acceptable
 				const r = this._currentBoard.loadConfig(dc.configuration);
+
 				if (
 					r !== BoardConfigResult.Success &&
 					r !== BoardConfigResult.SuccessNoChange
@@ -396,8 +421,10 @@ export class BoardManager {
 	 */
 	private onDeviceContextConfigurationChange() {
 		const dc = DeviceContext.getInstance();
+
 		if (this._currentBoard) {
 			const r = this._currentBoard.loadConfig(dc.configuration);
+
 			if (
 				r !== BoardConfigResult.Success &&
 				r !== BoardConfigResult.SuccessNoChange
@@ -414,16 +441,22 @@ export class BoardManager {
 
 	private invalidConfigWarning(result: BoardConfigResult) {
 		let what = "";
+
 		switch (result) {
 			case BoardConfigResult.InvalidFormat:
 				what =
 					': Invalid format must be of the form "key1=value2,key1=value2,..."';
+
 				break;
+
 			case BoardConfigResult.InvalidConfigID:
 				what = ": Invalid configuration key";
+
 				break;
+
 			case BoardConfigResult.InvalidOptionID:
 				what = ": Invalid configuration value";
+
 				break;
 		}
 		vscode.window.showWarningMessage(
@@ -440,8 +473,10 @@ export class BoardManager {
 					_plat.architecture === platform.architecture
 				);
 			});
+
 			if (existingPlatform) {
 				existingPlatform.defaultPlatform = platform.defaultPlatform;
+
 				if (!existingPlatform.installedVersion) {
 					existingPlatform.installedVersion = platform.version;
 					existingPlatform.rootBoardPath = platform.rootBoardPath;
@@ -457,6 +492,7 @@ export class BoardManager {
 	// Default arduino package information from arduino installation directory.
 	private getDefaultPlatforms(): IPlatform[] {
 		const defaultPlatforms = [];
+
 		try {
 			const packageBundled = fs.readFileSync(
 				path.join(
@@ -465,10 +501,12 @@ export class BoardManager {
 				),
 				"utf8",
 			);
+
 			if (!packageBundled) {
 				return defaultPlatforms;
 			}
 			const bundledObject = JSON.parse(packageBundled);
+
 			if (bundledObject && bundledObject.packages) {
 				for (const pkg of bundledObject.packages) {
 					for (const platform of pkg.platforms) {
@@ -494,10 +532,12 @@ export class BoardManager {
 
 	private getCustomPlatforms(): IPlatform[] {
 		const customPlatforms = [];
+
 		const hardwareFolder = path.join(
 			this._settings.sketchbookPath,
 			"hardware",
 		);
+
 		if (!util.directoryExistsSync(hardwareFolder)) {
 			return customPlatforms;
 		}
@@ -510,6 +550,7 @@ export class BoardManager {
 			const architectures = util.filterJunk(
 				util.readdirSync(path.join(hardwareFolder, packageName), true),
 			);
+
 			if (!architectures || architectures.length < 1) {
 				continue;
 			}
@@ -519,6 +560,7 @@ export class BoardManager {
 					packageName,
 					architecture,
 				);
+
 				if (
 					util.fileExistsSync(
 						path.join(platformFolder, "boards.txt"),
@@ -550,9 +592,11 @@ export class BoardManager {
 	// User manually installed packages.
 	private getManuallyInstalledPlatforms(): any[] {
 		const manuallyInstalled = [];
+
 		const rootPackagePath = path.join(
 			path.join(this._settings.packagePath, "packages"),
 		);
+
 		if (!util.directoryExistsSync(rootPackagePath)) {
 			return manuallyInstalled;
 		}
@@ -564,6 +608,7 @@ export class BoardManager {
 				packageName,
 				"hardware",
 			);
+
 			if (!util.directoryExistsSync(archPath)) {
 				continue;
 			}
@@ -574,6 +619,7 @@ export class BoardManager {
 				const allVersion = util.filterJunk(
 					util.readdirSync(path.join(archPath, architecture), true),
 				);
+
 				if (allVersion && allVersion.length) {
 					manuallyInstalled.push({
 						packageName,
@@ -605,6 +651,7 @@ export class BoardManager {
 				path.join(plat.rootBoardPath, "boards.txt"),
 				"utf8",
 			);
+
 			const res = parseBoardDescriptor(boardContent, plat);
 			res.forEach((bd) => {
 				this._boards.set(bd.key, bd);
@@ -629,6 +676,7 @@ export class BoardManager {
 				path.join(plat.rootBoardPath, "programmers.txt"),
 				"utf8",
 			);
+
 			const res = parseProgrammerDescriptor(programmersContent, plat);
 			res.forEach((prog) => {
 				this._programmers.set(prog.name, prog);
@@ -641,6 +689,7 @@ export class BoardManager {
 		this._boards.forEach((b) => {
 			result.push(b);
 		});
+
 		return result;
 	}
 
@@ -649,6 +698,7 @@ export class BoardManager {
 			return;
 		}
 		const normalizedUrl = url.parse(uriString);
+
 		if (!normalizedUrl) {
 			return;
 		}
@@ -659,6 +709,7 @@ export class BoardManager {
 
 	private async setPreferenceUrls(additionalUrls: string[]) {
 		const settingsUrls = additionalUrls.join(",");
+
 		if (
 			this._settings.preferences.get("boardsmanager.additional.urls") !==
 			settingsUrls

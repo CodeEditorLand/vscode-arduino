@@ -74,6 +74,7 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		const text = document
 			.lineAt(position.line)
 			.text.substr(0, position.character);
+
 		const match = text.match(/^\s*#\s*include\s*(<[^>]*|"[^"]*)$/);
 
 		if (match) {
@@ -86,6 +87,7 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 					),
 				);
 			});
+
 			return result;
 		}
 	}
@@ -96,13 +98,16 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		}
 		this._libPaths.clear();
 		this._headerFiles.clear();
+
 		if (fs.existsSync(this._cppConfigFile)) {
 			const deviceConfig = util.tryParseJSON(
 				fs.readFileSync(this._cppConfigFile, "utf8"),
 			);
+
 			if (deviceConfig) {
 				if (deviceConfig.sketch) {
 					const appFolder = path.dirname(deviceConfig.sketch);
+
 					if (util.directoryExistsSync(appFolder)) {
 						this._libPaths.add(path.normalize(appFolder));
 					}
@@ -136,6 +141,7 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		subItems.forEach((item) => {
 			try {
 				const state = fs.statSync(path.join(libPath, item));
+
 				if (state.isFile() && item.endsWith(".h")) {
 					this._headerFiles.add(item);
 				} else if (state.isDirectory()) {

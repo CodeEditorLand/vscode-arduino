@@ -150,6 +150,7 @@ export class ArduinoContentProvider
 			await ArduinoActivator.activate();
 		}
 		let type = "";
+
 		if (uri.toString() === Constants.BOARD_MANAGER_URI.toString()) {
 			type = "boardmanager";
 		} else if (
@@ -163,21 +164,29 @@ export class ArduinoContentProvider
 		}
 
 		const timeNow = new Date().getTime();
+
 		return `
         <html>
         <head>
             <script type="text/javascript">
                 window.onload = function() {
                     console.log('reloaded results window at time ${timeNow}ms');
+
                     var doc = document.documentElement;
+
                     var styles = window.getComputedStyle(doc);
+
                     var backgroundcolor = styles.getPropertyValue('--background-color') || '#1e1e1e';
+
                     var color = styles.getPropertyValue('--color') || '#d4d4d4';
+
                     var theme = document.body.className || 'vscode-dark';
+
                     var url = "${(await vscode.env.asExternalUri(this._webserver.getEndpointUri(type))).toString()}?" +
                             "theme=" + encodeURIComponent(theme.trim()) +
                             "&backgroundcolor=" + encodeURIComponent(backgroundcolor.trim()) +
                             "&color=" + encodeURIComponent(color.trim());
+
                     document.getElementById('frame').src = url;
                 };
             </script>
@@ -206,6 +215,7 @@ export class ArduinoContentProvider
 		await ArduinoContext.boardManager.loadPackages(
 			req.query.update === "true",
 		);
+
 		return res.json({
 			platforms: JSONHelper.decycle(
 				ArduinoContext.boardManager.platforms,
@@ -226,6 +236,7 @@ export class ArduinoContentProvider
 					req.body.arch,
 					req.body.version,
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -250,6 +261,7 @@ export class ArduinoContentProvider
 					req.body.boardName,
 					req.body.packagePath,
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -272,6 +284,7 @@ export class ArduinoContentProvider
 					"vscode.open",
 					vscode.Uri.parse(req.body.link),
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -294,6 +307,7 @@ export class ArduinoContentProvider
 					"workbench.action.openGlobalSettings",
 					{ query: req.body.query },
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -315,6 +329,7 @@ export class ArduinoContentProvider
 		} else {
 			try {
 				await vscode.commands.executeCommand(req.body.command);
+
 				return res.json({
 					status: "OK",
 				});
@@ -330,6 +345,7 @@ export class ArduinoContentProvider
 		await ArduinoContext.arduinoApp.libraryManager.loadLibraries(
 			req.query.update === "true",
 		);
+
 		return res.json({
 			libraries: ArduinoContext.arduinoApp.libraryManager.libraries,
 		});
@@ -346,6 +362,7 @@ export class ArduinoContentProvider
 					req.body.libraryName,
 					req.body.version,
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -370,6 +387,7 @@ export class ArduinoContentProvider
 					req.body.libraryName,
 					req.body.libraryPath,
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -393,6 +411,7 @@ export class ArduinoContentProvider
 				await ArduinoContext.arduinoApp.includeLibrary(
 					req.body.libraryPath,
 				);
+
 				return res.json({
 					status: "OK",
 				});
@@ -419,6 +438,7 @@ export class ArduinoContentProvider
 				isSelected,
 			});
 		});
+
 		return res.json({
 			installedBoards: JSONHelper.decycle(installedBoards, undefined),
 		});
@@ -442,6 +462,7 @@ export class ArduinoContentProvider
 					req.body.boardId,
 				);
 				ArduinoContext.boardManager.doChangeBoardType(bd);
+
 				return res.json({
 					status: "OK",
 				});
@@ -464,9 +485,11 @@ export class ArduinoContentProvider
 					req.body.configId,
 					req.body.optionId,
 				);
+
 				const dc = DeviceContext.getInstance();
 				dc.configuration =
 					ArduinoContext.boardManager.currentBoard.customConfig;
+
 				return res.json({
 					status: "OK",
 				});
@@ -483,6 +506,7 @@ export class ArduinoContentProvider
 	public async getExamples(req, res) {
 		const examples =
 			await ArduinoContext.arduinoApp.exampleManager.loadExamples();
+
 		return res.json({
 			examples,
 		});
@@ -496,6 +520,7 @@ export class ArduinoContentProvider
 		} else {
 			try {
 				ArduinoContext.arduinoApp.openExample(req.body.examplePath);
+
 				return res.json({
 					status: "OK",
 				});
@@ -517,7 +542,9 @@ export class ArduinoContentProvider
 	): void {
 		const wrappedHandler = async (req, res) => {
 			const guid = Uuid().replace(/-/g, "");
+
 			let properties = {};
+
 			if (post) {
 				properties = { ...req.body };
 
@@ -531,7 +558,9 @@ export class ArduinoContentProvider
 				correlationId: guid,
 				...properties,
 			});
+
 			const timer1 = new Logger.Timer();
+
 			try {
 				await Promise.resolve(handler(req, res));
 			} catch (error) {
@@ -546,6 +575,7 @@ export class ArduinoContentProvider
 				duration: timer1.end(),
 			});
 		};
+
 		if (post) {
 			this._webserver.addPostHandler(url, wrappedHandler);
 		} else {

@@ -52,9 +52,11 @@ export class ProgrammerManager {
 			description: programmer.name,
 			programmer,
 		}));
+
 		const chosen = await vscode.window.showQuickPick(selectionItems, {
 			placeHolder: "Select programmer",
 		});
+
 		if (!chosen) {
 			return;
 		}
@@ -84,6 +86,7 @@ export class ProgrammerManager {
 			this._arduinoApp.boardManager.installedProgrammers.get(
 				programmerName,
 			);
+
 		return programmer ? programmer.displayName : programmerName;
 	}
 
@@ -94,6 +97,7 @@ export class ProgrammerManager {
 
 		// Filter the list of all programmers to those that share the same platform as the board
 		const availableProgrammers: IProgrammer[] = [];
+
 		for (const programmer of this._arduinoApp.boardManager.installedProgrammers.values()) {
 			if (programmer.platform === currentBoard.platform) {
 				availableProgrammers.push(programmer);

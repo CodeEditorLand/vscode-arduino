@@ -81,6 +81,7 @@ export function decycle(object, replacer) {
 			// ES6 WeakMap.
 
 			old_path = objects.get(value);
+
 			if (old_path !== undefined) {
 				return { $ref: old_path };
 			}
@@ -150,6 +151,7 @@ export function retrocycle($) {
 				value.forEach(function (element, i) {
 					if (typeof element === "object" && element !== null) {
 						const path = element.$ref;
+
 						if (typeof path === "string" && px.test(path)) {
 							value[i] = eval(path);
 						} else {
@@ -160,8 +162,10 @@ export function retrocycle($) {
 			} else {
 				Object.keys(value).forEach(function (name) {
 					const item = value[name];
+
 					if (typeof item === "object" && item !== null) {
 						const path = item.$ref;
+
 						if (typeof path === "string" && px.test(path)) {
 							value[name] = eval(path);
 						} else {
@@ -172,5 +176,6 @@ export function retrocycle($) {
 			}
 		}
 	})($);
+
 	return $;
 }

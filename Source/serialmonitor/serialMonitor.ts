@@ -97,10 +97,12 @@ export class SerialMonitor implements vscode.Disposable {
 		this.checkForUndefinedSerialMonitorApi(true);
 
 		const ports = await this.serialMonitorApi.listAvailablePorts();
+
 		if (!ports.length) {
 			vscode.window.showInformationMessage(
 				"No serial port is available.",
 			);
+
 			return;
 		}
 
@@ -121,6 +123,7 @@ export class SerialMonitor implements vscode.Disposable {
 		if (chosen && chosen.label) {
 			this.currentPort = chosen.label;
 			this.updatePortListStatus(this.currentPort);
+
 			return chosen.label;
 		}
 
@@ -136,19 +139,24 @@ export class SerialMonitor implements vscode.Disposable {
 
 	public async selectBaudRate(): Promise<number | undefined> {
 		const rates = SerialMonitor.listBaudRates();
+
 		const chosen = await vscode.window.showQuickPick(
 			rates.map((rate) => rate.toString()),
 		);
+
 		if (!chosen) {
 			Logger.warn("No baud rate selected, keeping previous baud rate");
+
 			return undefined;
 		}
 		if (!parseInt(chosen, 10)) {
 			Logger.warn("Serial Monitor has not been started");
+
 			return undefined;
 		}
 		const selectedRate: number = parseInt(chosen, 10);
 		this.lastSelectedBaudRate = selectedRate;
+
 		return selectedRate;
 	}
 
@@ -161,6 +169,7 @@ export class SerialMonitor implements vscode.Disposable {
 				"Select",
 				"Cancel",
 			);
+
 			if (ans === "Select") {
 				if ((await this.selectSerialPort()) === undefined) {
 					return;
@@ -192,6 +201,7 @@ export class SerialMonitor implements vscode.Disposable {
 			this.updatePortStatus(true);
 		} catch (err) {
 			Logger.warn("Serial Monitor failed to open");
+
 			if (err.message) {
 				vscode.window.showErrorMessage(
 					`Error opening serial port: ${err.message}`,
@@ -204,7 +214,9 @@ export class SerialMonitor implements vscode.Disposable {
 		this.checkForUndefinedSerialMonitorApi(true);
 
 		const portToClose = port ?? this.currentPort;
+
 		let closed = false;
+
 		if (portToClose) {
 			closed = await this.serialMonitorApi.stopMonitoringPort(
 				port ?? this.currentPort,
@@ -224,6 +236,7 @@ export class SerialMonitor implements vscode.Disposable {
 	): void {
 		const errorString =
 			"Serial Monitor API was not retrieved. You may not have the most recent version of the Serial Monitor extension installed.";
+
 		if (this.serialMonitorApi === undefined) {
 			if (showError) {
 				Logger.notifyUserError(
@@ -241,6 +254,7 @@ export class SerialMonitor implements vscode.Disposable {
 
 	private updatePortListStatus(port?: string) {
 		const dc = DeviceContext.getInstance();
+
 		if (port) {
 			dc.port = port;
 		}

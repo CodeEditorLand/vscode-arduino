@@ -27,7 +27,9 @@ export function isCompilerParserEnabled(dc?: DeviceContext) {
 	}
 	const globalDisable =
 		VscodeSettings.getInstance().disableIntelliSenseAutoGen;
+
 	const projectSetting = dc.intelliSenseGen;
+
 	return (
 		(projectSetting !== "disable" && !globalDisable) ||
 		projectSetting === "enable"
@@ -65,6 +67,7 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 	}
 
 	const engines = makeCompilerParserEngines(dc);
+
 	const runner = new ccp.Runner(engines);
 
 	// Set up the callback to be called after parsing
@@ -73,6 +76,7 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 			arduinoChannel.warning(
 				"Failed to generate IntelliSense configuration.",
 			);
+
 			return;
 		}
 
@@ -85,7 +89,9 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 		// forced include - users expect Arduino symbols to be available
 		// in main sketch without having to include the header explicitly
 		const ardHeader = await runner.result.findFile("Arduino.h");
+
 		const forcedIncludes = ardHeader.length > 0 ? ardHeader : undefined;
+
 		if (!forcedIncludes) {
 			arduinoChannel.warning(
 				'Unable to locate "Arduino.h" within IntelliSense include paths.',
@@ -107,6 +113,7 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 		const mmdIndex = runner.result.options.findIndex(
 			(element) => element === "-MMD",
 		);
+
 		if (mmdIndex) {
 			runner.result.options.splice(mmdIndex);
 		}
@@ -116,14 +123,18 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 
 		try {
 			const cmd = os.platform() === "darwin" ? "Cmd" : "Ctrl";
+
 			const help = `To manually rebuild your IntelliSense configuration run "${cmd}+Alt+I"`;
+
 			const pPath = path.join(
 				ArduinoWorkspace.rootPath,
 				constants.CPP_CONFIG_FILE,
 			);
+
 			const prop = new ccp.CCppProperties();
 			prop.read(pPath);
 			prop.merge(content, ccp.CCppPropertiesMergeMode.ReplaceSameNames);
+
 			if (prop.write(pPath)) {
 				arduinoChannel.info(
 					`IntelliSense configuration updated. ${help}`,
@@ -140,6 +151,7 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 			);
 		}
 	};
+
 	return {
 		callback: runner.callback(),
 		conclude: _conclude,
@@ -158,8 +170,11 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
  */
 function makeCompilerParserEngines(dc: DeviceContext) {
 	const sketch = path.basename(dc.sketch);
+
 	const trigger = ccp.getTriggerForArduinoGcc(sketch);
+
 	const gccParserEngine = new ccp.ParserGcc(trigger);
+
 	return [gccParserEngine];
 }
 

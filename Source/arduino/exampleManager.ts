@@ -37,6 +37,7 @@ export class ExampleManager {
 				this._settings.defaultLibPath,
 				true,
 			);
+
 		if (examplesFromDefaultLibraries.length) {
 			examples.push({
 				name: "Examples for any board",
@@ -48,15 +49,18 @@ export class ExampleManager {
 		// load Examples from current board's firmware package directory.
 		if (this._arduinoApp.boardManager.currentBoard) {
 			const currentBoard = this._arduinoApp.boardManager.currentBoard;
+
 			const currentBoardLibrariesPath = path.join(
 				currentBoard.platform.rootBoardPath,
 				"libraries",
 			);
+
 			const examplesFromCurrentBoard =
 				await this.parseExamplesFromLibrary(
 					currentBoardLibrariesPath,
 					false,
 				);
+
 			if (examplesFromCurrentBoard.length) {
 				examples.push({
 					name: `Examples for ${currentBoard.name}`,
@@ -71,11 +75,13 @@ export class ExampleManager {
 			this._settings.sketchbookPath,
 			"libraries",
 		);
+
 		const examplesFromCustomLibraries = await this.parseExamplesFromLibrary(
 			customLibrariesPath,
 			true,
 			true,
 		);
+
 		if (examplesFromCustomLibraries.length) {
 			examples.push({
 				name: "Examples from Custom Libraries",
@@ -89,7 +95,9 @@ export class ExampleManager {
 			this._settings.sketchbookPath,
 			"sketches",
 		);
+
 		const examplesFromSketches = await this.parseExamples(sketchesPath);
+
 		if (examplesFromSketches.length) {
 			examples.push({
 				name: "Workspace",
@@ -120,12 +128,17 @@ export class ExampleManager {
 		const rootNode = <IExampleNode>{
 			children: [],
 		};
+
 		const exampleMap = new Map<string, IExampleNode>();
 		exampleMap.set(path.resolve(exampleFolders[0]), rootNode);
+
 		for (let i = 1; i < exampleFolders.length; i++) {
 			const currentPath = path.resolve(exampleFolders[i]);
+
 			const parentPath = path.resolve(path.dirname(exampleFolders[i]));
+
 			const parentExample = exampleMap.get(parentPath);
+
 			if (parentExample && !parentExample.isLeaf) {
 				const currentExample = <IExampleNode>{
 					name: path.basename(exampleFolders[i]),
@@ -148,24 +161,30 @@ export class ExampleManager {
 		categorizeIncompatible: boolean = false,
 	) {
 		const examples = [];
+
 		const inCompatibles = [];
+
 		if (!util.directoryExistsSync(rootPath)) {
 			return [];
 		}
 		const libraries = util.readdirSync(rootPath, true);
+
 		for (const library of libraries) {
 			const propertiesFile = path.join(
 				rootPath,
 				library,
 				"library.properties",
 			);
+
 			if (checkCompatibility && util.fileExistsSync(propertiesFile)) {
 				const properties = <any>(
 					await util.parseProperties(propertiesFile)
 				);
+
 				const children = this.parseExamples(
 					path.join(rootPath, library, "examples"),
 				);
+
 				if (children.length) {
 					// When missing architectures field in library.properties, fall it back to "*".
 					if (this.isSupported(properties.architectures || "*")) {
@@ -186,6 +205,7 @@ export class ExampleManager {
 				const children = this.parseExamples(
 					path.join(rootPath, library, "examples"),
 				);
+
 				if (children.length) {
 					examples.push({
 						name: library,
@@ -208,9 +228,11 @@ export class ExampleManager {
 
 	private isExampleFolder(dirname) {
 		const items = fs.readdirSync(dirname);
+
 		const ino = items.find((item) => {
 			return util.isArduinoFile(path.join(dirname, item));
 		});
+
 		return !!ino;
 	}
 
@@ -219,11 +241,13 @@ export class ExampleManager {
 			return false;
 		}
 		const currentBoard = this._arduinoApp.boardManager.currentBoard;
+
 		if (!currentBoard) {
 			return true;
 		}
 
 		const targetArch = currentBoard.platform.architecture;
+
 		return (
 			architectures.indexOf(targetArch) >= 0 ||
 			architectures.indexOf("*") >= 0

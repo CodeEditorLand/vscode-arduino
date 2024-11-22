@@ -36,6 +36,7 @@ const arduinoContentProviderModule = impor(
 const arduinoActivatorModule = impor(
 	"./arduinoActivator",
 ) as typeof import("./arduinoActivator");
+
 const arduinoContextModule = impor(
 	"./arduinoContext",
 ) as typeof import("./arduinoContext");
@@ -68,6 +69,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	showDeprecatedPopup();
 	Logger.configure(context);
 	arduinoActivatorModule.default.context = context;
+
 	const activeGuid = uuidModule().replace(/-/g, "");
 	Logger.traceUserData("start-activate-extension", {
 		correlationId: activeGuid,
@@ -75,10 +77,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Show a warning message if the working file is not under the workspace folder.
 	// People should know the extension might not work appropriately, they should look for the doc to get started.
 	const openEditor = vscode.window.activeTextEditor;
+
 	if (openEditor && openEditor.document.fileName.endsWith(".ino")) {
 		const workingFile = path.normalize(openEditor.document.fileName);
+
 		const workspaceFolder =
 			(vscode.workspace && ArduinoWorkspace.rootPath) || "";
+
 		if (
 			!workspaceFolder ||
 			workingFile.indexOf(path.normalize(workspaceFolder)) < 0
@@ -90,6 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	}
 	const vscodeSettings = VscodeSettings.getInstance();
+
 	const deviceContext = DeviceContext.getInstance();
 	deviceContext.extensionPath = context.extensionPath;
 	context.subscriptions.push(deviceContext);
@@ -101,14 +107,19 @@ export async function activate(context: vscode.ExtensionContext) {
 		getUserData?: () => any,
 	) => {
 		showDeprecatedPopup();
+
 		const guid = uuidModule().replace(/-/g, "");
 		Logger.traceUserData(`start-command-` + command, {
 			correlationId: guid,
 		});
+
 		const timer1 = new Logger.Timer();
+
 		let telemetryResult;
+
 		try {
 			let result = commandBody(...args);
+
 			if (result) {
 				result = await Promise.resolve(result);
 			}
@@ -162,12 +173,15 @@ export async function activate(context: vscode.ExtensionContext) {
 				const arduinoPath =
 					arduinoContextModule.default.arduinoApp.settings
 						.arduinoPath;
+
 				const commandPath =
 					arduinoContextModule.default.arduinoApp.settings
 						.commandPath;
+
 				const useArduinoCli =
 					arduinoContextModule.default.arduinoApp.settings
 						.useArduinoCli;
+
 				const usingBundledArduinoCli =
 					arduinoContextModule.default.arduinoApp.settings
 						.usingBundledArduinoCli;
@@ -186,6 +200,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					const error = new Error(
 						constants.messages.INVALID_COMMAND_PATH + commandPath,
 					);
+
 					if (usingBundledArduinoCli) {
 						Logger.notifyUserError("InvalidCommandPath", error);
 					} else {
@@ -312,6 +327,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		// should be excluded
 		const sketchbookPath =
 			arduinoContextModule.default.arduinoApp.settings.sketchbookPath;
+
 		const excludePatterns = [
 			path.relative(
 				ArduinoWorkspace.rootPath,
@@ -337,6 +353,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			includePattern,
 			excludePattern,
 		);
+
 		const newSketchFileName = await vscode.window.showQuickPick(
 			fileUris.map((fileUri) => ({
 				label: path.relative(ArduinoWorkspace.rootPath, fileUri.fsPath),
@@ -466,10 +483,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		"arduino.installBoard",
 		async (packageName, arch, version: string = "") => {
 			let installed = false;
+
 			const installedBoards =
 				arduinoContextModule.default.boardManager.installedBoards;
 			installedBoards.forEach((board: IBoard, key: string) => {
 				let _packageName: string;
+
 				if (board.platform.package && board.platform.package.name) {
 					_packageName = board.platform.package.name;
 				} else {
@@ -551,6 +570,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 	vscode.window.onDidChangeActiveTextEditor(async () => {
 		const activeEditor = vscode.window.activeTextEditor;
+
 		if (
 			activeEditor &&
 			((path.basename(activeEditor.document.fileName) ===
@@ -595,6 +615,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 			const document = editor.document;
+
 			if (/\.pde$/.test(document.uri.fsPath)) {
 				const newFsName = document.uri.fsPath.replace(/\.pde$/, ".ino");
 				await vscode.commands.executeCommand(
@@ -678,6 +699,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					"vscode-arduino:showExampleExplorer",
 					true,
 				);
+
 				if (forceRefresh) {
 					vscode.commands.executeCommand("arduino.reloadExample");
 				}

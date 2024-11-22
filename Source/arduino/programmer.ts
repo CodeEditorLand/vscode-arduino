@@ -10,6 +10,7 @@ export function parseProgrammerDescriptor(
 	const progrmmerLineRegex = /([^.]+)\.(\S+)=(.+)/;
 
 	const result = new Map<string, IProgrammer>();
+
 	const lines = programmerDescriptor.split(/[\r|\r\n|\n]/);
 
 	lines.forEach((line) => {
@@ -19,8 +20,10 @@ export function parseProgrammerDescriptor(
 		}
 
 		const match = progrmmerLineRegex.exec(line);
+
 		if (match && match.length > 3) {
 			let programmer = result.get(match[1]);
+
 			if (!programmer) {
 				programmer = new Programmer(match[1], plat);
 				result.set(programmer.name, programmer);
@@ -30,6 +33,7 @@ export function parseProgrammerDescriptor(
 			}
 		}
 	});
+
 	return result;
 }
 

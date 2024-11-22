@@ -16,9 +16,12 @@ import { VscodeSettings } from "./vscodeSettings";
 export interface IArduinoSettings {
 	arduinoPath: string;
 	commandPath: string;
+
 	defaultExamplePath: string;
 	packagePath: string;
+
 	defaultPackagePath: string;
+
 	defaultLibPath: string;
 	sketchbookPath: string;
 	preferencePath: string;
@@ -61,8 +64,10 @@ export class ArduinoSettings implements IArduinoSettings {
 		this._commandPath = VscodeSettings.getInstance().commandPath;
 		this._useArduinoCli = VscodeSettings.getInstance().useArduinoCli;
 		await this.tryResolveArduinoPath();
+
 		if (platform === "win32") {
 			await this.updateWindowsPath();
+
 			if (this._commandPath === "") {
 				this._useArduinoCli
 					? (this._commandPath = "arduino-cli.exe")
@@ -197,6 +202,7 @@ export class ArduinoSettings implements IArduinoSettings {
 
 	public get commandPath(): string {
 		const platform = os.platform();
+
 		if (platform === "darwin" && !this._usingBundledArduinoCli) {
 			return path.join(
 				util.resolveMacArduinoAppPath(
@@ -241,6 +247,7 @@ export class ArduinoSettings implements IArduinoSettings {
 
 	public reloadPreferences() {
 		this._preferences = util.parseConfigFile(this.preferencePath);
+
 		if (this.preferences.get("sketchbook.path")) {
 			if (
 				util.directoryExistsSync(
@@ -265,6 +272,7 @@ export class ArduinoSettings implements IArduinoSettings {
 	 */
 	private async updateWindowsPath(): Promise<void> {
 		let folder;
+
 		try {
 			folder = await util.getRegistryValues(
 				WinReg.HKCU,
@@ -280,6 +288,7 @@ export class ArduinoSettings implements IArduinoSettings {
 		folder = folder.replace(/%([^%]+)%/g, (match, p1) => {
 			return process.env[p1];
 		});
+
 		if (
 			util.directoryExistsSync(path.join(this._arduinoPath, "portable"))
 		) {
@@ -318,7 +327,9 @@ export class ArduinoSettings implements IArduinoSettings {
 
 	private async bundledArduinoCliPath(): Promise<string | undefined> {
 		const platform = await util.getPlatform();
+
 		const name = this.bundledArduinoCliName[platform];
+
 		if (!name) {
 			return undefined;
 		}
@@ -332,9 +343,11 @@ export class ArduinoSettings implements IArduinoSettings {
 		// "usual software installation directory for each os".
 		// 1. Search vscode user settings first.
 		const configValue = VscodeSettings.getInstance().arduinoPath;
+
 		if (!configValue || !configValue.trim()) {
 			// 2. Resolve arduino path from the bundled arduino-cli, if CLI support is enabled.
 			const bundledPath = await this.bundledArduinoCliPath();
+
 			if (bundledPath && this._useArduinoCli && !this._commandPath) {
 				// The extension VSIX stripped the executable bit, so we need to set it.
 				// 0x755 means rwxr-xr-x (read and execute for everyone, write for owner).
@@ -343,6 +356,7 @@ export class ArduinoSettings implements IArduinoSettings {
 				// already executable.
 				// https://github.com/microsoft/vscode-arduino/issues/1599
 				let isExecutable = false;
+
 				try {
 					await fs.access(bundledPath, fsconstants.X_OK);
 					isExecutable = true;

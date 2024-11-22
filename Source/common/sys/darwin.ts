@@ -17,9 +17,11 @@ export function resolveArduinoPath(): string {
 		path.join(process.env.HOME, "Applications"),
 		"/Applications",
 	];
+
 	for (const scanPath of defaultCommonPaths) {
 		if (directoryExistsSync(path.join(scanPath, "Arduino.app"))) {
 			result = scanPath;
+
 			break;
 		}
 	}
@@ -40,6 +42,7 @@ export function validateArduinoPath(
 
 export function findFile(fileName: string, cwd: string): string {
 	let pathString;
+
 	try {
 		pathString = childProcess
 			.execSync(`find ${cwd} -name ${fileName} -type f`, {

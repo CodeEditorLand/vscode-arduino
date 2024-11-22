@@ -39,8 +39,11 @@ export interface IVscodeSettings {
 	analyzeOnOpen: boolean;
 	analyzeOnSettingChange: boolean;
 	updateAdditionalUrls(urls: string[]): void;
+
 	setUseArduinoCli(value: boolean): Promise<void>;
+
 	setArduinoPath(value: string): Promise<void>;
+
 	setCommandPath(value: string): Promise<void>;
 }
 
@@ -86,6 +89,7 @@ export class VscodeSettings implements IVscodeSettings {
 		// existing settings, but we immediately write back the correctly
 		// formatted version.
 		const split = toStringArray(value);
+
 		if (typeof value === "string") {
 			this.updateAdditionalUrls(split);
 		}
@@ -155,6 +159,7 @@ export class VscodeSettings implements IVscodeSettings {
 
 	private getConfigValue<T>(key: string): T {
 		const workspaceConfig = vscode.workspace.getConfiguration();
+
 		return workspaceConfig.get<T>(key);
 	}
 

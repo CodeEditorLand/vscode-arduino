@@ -15,6 +15,7 @@ interface IPackageInfo {
 
 function getPackageInfo(context: vscode.ExtensionContext): IPackageInfo {
 	const packageJson = context.extension.packageJSON;
+
 	return {
 		name: context.extension.id,
 		version: packageJson.version,
@@ -28,20 +29,25 @@ function isNumeric(n) {
 
 export class TelemetryTransport extends winston.Transport {
 	private reporter: TelemetryReporter;
+
 	constructor(options: any) {
 		super({ ...options, context: null });
 		this.name = "telemetry";
+
 		if (!options.context) {
 			winston.error(
 				"Failed to initialize telemetry, please set the vscode context in options.",
 			);
+
 			return;
 		}
 		const packageInfo = getPackageInfo(options.context);
+
 		if (!packageInfo.aiKey) {
 			winston.error(
 				"Failed to initialize telemetry due to no aiKey in package.json.",
 			);
+
 			return;
 		}
 		this.reporter = new TelemetryReporter(
@@ -63,11 +69,15 @@ export class TelemetryTransport extends winston.Transport {
 		if (this.reporter && metadata && metadata.telemetry) {
 			try {
 				delete metadata.telemetry;
+
 				const properties: { [key: string]: string } = { level };
+
 				const measures: { [key: string]: number } = {};
+
 				for (const key of Object.keys(metadata)) {
 					if (typeof key === "string") {
 						const value = metadata[key];
+
 						if (
 							value === null ||
 							typeof value === "string" ||
@@ -104,6 +114,7 @@ export class TelemetryTransport extends winston.Transport {
 			}
 		}
 		super.emit("logged");
+
 		if (callback) {
 			callback(null, true);
 		}

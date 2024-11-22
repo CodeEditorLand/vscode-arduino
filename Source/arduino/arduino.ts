@@ -114,6 +114,7 @@ export class ArduinoApp {
 					await this._analysisManager.requestAnalysis();
 				}
 			};
+
 			const dc = DeviceContext.getInstance();
 			dc.onChangeBoard(requestAnalysis);
 			dc.onChangeConfiguration(requestAnalysis);
@@ -142,8 +143,11 @@ export class ArduinoApp {
 	public getAdditionalUrls(): string[] {
 		// For better compatibility, merge urls both in user settings and arduino IDE preferences.
 		const settingsUrls = VscodeSettings.getInstance().additionalUrls;
+
 		let preferencesUrls = [];
+
 		const preferences = this._settings.preferences;
+
 		if (preferences && preferences.has("boardsmanager.additional.urls")) {
 			preferencesUrls = util.toStringArray(
 				preferences.get("boardsmanager.additional.urls"),
@@ -212,6 +216,7 @@ export class ArduinoApp {
 		return await this._build(buildMode, buildDir)
 			.then((ret) => {
 				this._building = false;
+
 				return ret;
 			})
 			.catch((reason) => {
@@ -221,6 +226,7 @@ export class ArduinoApp {
 					reason,
 					`Unhandled exception when cleaning up build "${buildMode}": ${JSON.stringify(reason)}`,
 				);
+
 				return false;
 			});
 	}
@@ -231,12 +237,15 @@ export class ArduinoApp {
 			return;
 		}
 		const dc = DeviceContext.getInstance();
+
 		const appPath = path.join(ArduinoWorkspace.rootPath, dc.sketch);
+
 		if (util.fileExistsSync(appPath)) {
 			const hFiles = glob.sync(`${libraryPath}/*.h`, {
 				nodir: true,
 				matchBase: true,
 			});
+
 			const hIncludes = hFiles
 				.map((hFile) => {
 					return `#include <${path.basename(hFile)}>`;
@@ -251,6 +260,7 @@ export class ArduinoApp {
 				vscode.ViewColumn.One,
 				true,
 			);
+
 			const activeEditor = vscode.window.visibleTextEditors.find(
 				(textEditor) => {
 					return (
@@ -259,6 +269,7 @@ export class ArduinoApp {
 					);
 				},
 			);
+
 			if (activeEditor) {
 				// Insert *.h at the beginning of the sketch code.
 				await activeEditor.edit((editBuilder) => {
@@ -286,7 +297,9 @@ export class ArduinoApp {
 		showOutput: boolean = true,
 	) {
 		arduinoChannel.show();
+
 		const updatingIndex = packageName === "dummy" && !arch && !version;
+
 		if (updatingIndex) {
 			arduinoChannel.start(`Update package index files...`);
 		} else {
@@ -297,6 +310,7 @@ export class ArduinoApp {
 					packageName,
 					arch,
 				);
+
 				if (util.directoryExistsSync(packagePath)) {
 					util.rmdirRecursivelySync(packagePath);
 				}
@@ -308,12 +322,14 @@ export class ArduinoApp {
 					`Error message - ${error.message}${os.EOL}`,
 				);
 				arduinoChannel.error(`Exit with code=${error.code}${os.EOL}`);
+
 				return;
 			}
 		}
 		arduinoChannel.info(
 			`${packageName}${arch && ":" + arch}${version && ":" + version}`,
 		);
+
 		try {
 			if (this.useArduinoCli()) {
 				if (updatingIndex) {
@@ -384,7 +400,9 @@ export class ArduinoApp {
 		showOutput: boolean = true,
 	) {
 		arduinoChannel.show();
+
 		const updatingIndex = libName === "dummy" && !version;
+
 		if (updatingIndex) {
 			arduinoChannel.start("Update library index files...");
 		} else {
@@ -458,6 +476,7 @@ export class ArduinoApp {
 	public openExample(example) {
 		function tmpName(name) {
 			let counter = 0;
+
 			let candidateName = name;
 			// eslint-disable-next-line no-constant-condition
 			while (true) {
@@ -477,10 +496,12 @@ export class ArduinoApp {
 			this._settings.sketchbookPath,
 			"generated_examples",
 		);
+
 		if (!util.directoryExistsSync(sketchPath)) {
 			util.mkdirRecursivelySync(sketchPath);
 		}
 		let destExample = "";
+
 		if (util.directoryExistsSync(example)) {
 			destExample = tmpName(
 				path.join(sketchPath, path.basename(example)),
@@ -495,12 +516,15 @@ export class ArduinoApp {
 		if (destExample) {
 			// Step 2: Scaffold the example project to an arduino project.
 			const items = fs.readdirSync(destExample);
+
 			const sketchFile = items.find((item) => {
 				return util.isArduinoFile(path.join(destExample, item));
 			});
+
 			if (sketchFile) {
 				// Generate arduino.json
 				const dc = DeviceContext.getInstance();
+
 				const arduinoJson = {
 					sketch: sketchFile,
 					// TODO EW, 2020-02-18: COM1 is Windows specific - what about OSX and Linux users?
@@ -508,6 +532,7 @@ export class ArduinoApp {
 					board: dc.board,
 					configuration: dc.configuration,
 				};
+
 				const arduinoConfigFilePath = path.join(
 					destExample,
 					constants.ARDUINO_CONFIG_FILE,
@@ -588,7 +613,9 @@ export class ArduinoApp {
 		}
 
 		arduinoChannel.info(`Running ${what}-build command: "${cmdline}"`);
+
 		let cmd: string;
+
 		let args: string[];
 		// pre-/post-build commands feature full bash support on UNIX systems.
 		// On Windows you have full cmd support.
@@ -619,6 +646,7 @@ export class ArduinoApp {
 			arduinoChannel.error(
 				`Running ${what}-build command failed: ${os.EOL}${msg}`,
 			);
+
 			return false;
 		}
 		return true;
@@ -657,8 +685,11 @@ export class ArduinoApp {
 		buildDir?: string,
 	): Promise<boolean> {
 		const dc = DeviceContext.getInstance();
+
 		const args: string[] = [];
+
 		let restoreSerialMonitor: boolean = false;
+
 		const verbose =
 			VscodeSettings.getInstance().logLevel ===
 			constants.LogLevel.Verbose;
@@ -684,6 +715,7 @@ export class ArduinoApp {
 			vscode.window.showWarningMessage(
 				"Workspace doesn't seem to have a folder added to it yet.",
 			);
+
 			return false;
 		}
 
@@ -701,6 +733,7 @@ export class ArduinoApp {
 				vscode.window.showErrorMessage(
 					"No sketch file was found. Please specify the sketch in the arduino.json file",
 				);
+
 				return false;
 			}
 		}
@@ -711,6 +744,7 @@ export class ArduinoApp {
 				"Yes",
 				"No",
 			);
+
 			if (choice === "Yes") {
 				vscode.commands.executeCommand("arduino.selectSerialPort");
 			}
@@ -725,6 +759,7 @@ export class ArduinoApp {
 				!dc.port
 			) {
 				await selectSerial();
+
 				return false;
 			}
 
@@ -746,6 +781,7 @@ export class ArduinoApp {
 				!dc.port
 			) {
 				await selectSerial();
+
 				return false;
 			}
 
@@ -753,6 +789,7 @@ export class ArduinoApp {
 				arduinoChannel.error(
 					"This command is only available when using the Arduino CLI",
 				);
+
 				return false;
 			}
 
@@ -763,15 +800,18 @@ export class ArduinoApp {
 			}
 		} else if (buildMode === BuildMode.UploadProgrammer) {
 			const programmer = this.programmerManager.currentProgrammer;
+
 			if (!programmer) {
 				logger.notifyUserError(
 					"programmerManager.currentProgrammer",
 					new Error(constants.messages.NO_PROGRAMMMER_SELECTED),
 				);
+
 				return false;
 			}
 			if (!dc.port) {
 				await selectSerial();
+
 				return false;
 			}
 
@@ -789,21 +829,25 @@ export class ArduinoApp {
 			args.push("--port", dc.port);
 		} else if (buildMode === BuildMode.CliUploadProgrammer) {
 			const programmer = this.programmerManager.currentProgrammer;
+
 			if (!programmer) {
 				logger.notifyUserError(
 					"programmerManager.currentProgrammer",
 					new Error(constants.messages.NO_PROGRAMMMER_SELECTED),
 				);
+
 				return false;
 			}
 			if (!dc.port) {
 				await selectSerial();
+
 				return false;
 			}
 			if (!this.useArduinoCli()) {
 				arduinoChannel.error(
 					"This command is only available when using the Arduino CLI",
 				);
+
 				return false;
 			}
 
@@ -843,6 +887,7 @@ export class ArduinoApp {
 		// we prepare the channel here since all following code will
 		// or at leas can possibly output to it
 		arduinoChannel.show();
+
 		if (VscodeSettings.getInstance().clearOutputOnBuild) {
 			arduinoChannel.clear();
 		}
@@ -860,6 +905,7 @@ export class ArduinoApp {
 			}
 
 			const dirPath = path.dirname(buildDir);
+
 			if (!util.directoryExistsSync(dirPath)) {
 				util.mkdirRecursivelySync(dirPath);
 			}
@@ -889,6 +935,7 @@ export class ArduinoApp {
 				? constants.LogLevel.Verbose
 				: constants.LogLevel.Info,
 		};
+
 		if (dc.port) {
 			env["VSCA_SERIAL"] = dc.port;
 		}
@@ -923,15 +970,18 @@ export class ArduinoApp {
 
 		const cleanup = async (result: "ok" | "error") => {
 			let ret = true;
+
 			if (result === "ok") {
 				ret = await this.runPrePostBuildCommand(dc, env, "post");
 			}
 			await cocopa.conclude();
+
 			if (
 				buildMode === BuildMode.Upload ||
 				buildMode === BuildMode.UploadProgrammer
 			) {
 				UsbDetector.getInstance().resumeListening();
+
 				if (restoreSerialMonitor) {
 					await SerialMonitor.getInstance().openSerialMonitor(true);
 				}
@@ -942,14 +992,20 @@ export class ArduinoApp {
 		// Wrap line-oriented callbacks to accept arbitrary chunks of data.
 		const wrapLineCallback = (callback: (line: string) => void) => {
 			let buffer = "";
+
 			let startIndex = 0;
+
 			const eol = this.useArduinoCli() ? "\n" : os.EOL;
+
 			return (data: string) => {
 				buffer += data;
+
 				while (true) {
 					const pos = buffer.indexOf(eol, startIndex);
+
 					if (pos < 0) {
 						startIndex = buffer.length;
+
 						break;
 					}
 					const line = buffer.substring(0, pos + eol.length);
@@ -973,9 +1029,11 @@ export class ArduinoApp {
 				}
 			}
 		});
+
 		const stderrcb = wrapLineCallback((line: string) => {
 			if (os.platform() === "win32") {
 				line = line.trim();
+
 				if (line.length <= 0) {
 					return;
 				}
@@ -993,6 +1051,7 @@ export class ArduinoApp {
 					// 2022-04-09 22:48:46.204 Arduino[55373:2073803] Arg 25: '--pref'
 					/^[\d\-.:\s]*Arduino\[[\d:]*\]/,
 				];
+
 				for (const f of filters) {
 					if (line.match(f)) {
 						return;
@@ -1018,6 +1077,7 @@ export class ArduinoApp {
 		).then(
 			async () => {
 				const ret = await cleanup("ok");
+
 				if (ret) {
 					arduinoChannel.end(
 						`${buildMode} sketch '${dc.sketch}'${os.EOL}`,
@@ -1027,12 +1087,14 @@ export class ArduinoApp {
 			},
 			async (reason) => {
 				await cleanup("error");
+
 				const msg = reason.code
 					? `Exit with code=${reason.code}`
 					: JSON.stringify(reason);
 				arduinoChannel.error(
 					`${buildMode} sketch '${dc.sketch}': ${msg}${os.EOL}`,
 				);
+
 				return false;
 			},
 		);
@@ -1048,6 +1110,7 @@ export class ArduinoApp {
 		},
 	): Thenable<object> {
 		const additionalUrls = this.getAdditionalUrls();
+
 		return util.spawn(
 			this._settings.commandPath,
 			args.concat(["--additional-urls", additionalUrls.join(",")]),

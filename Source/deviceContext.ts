@@ -172,6 +172,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 				// Workaround for change in API, populate required props for arduino.json
 				this._settings.reset();
+
 				return this;
 			},
 		);
@@ -306,15 +307,18 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 			vscode.window.showInformationMessage(
 				"Arduino.json already generated.",
 			);
+
 			return;
 		} else {
 			if (!ArduinoWorkspace.rootPath) {
 				vscode.window.showInformationMessage(
 					"Please open a folder first.",
 				);
+
 				return;
 			}
 			await this.resolveMainSketch();
+
 			if (this.sketch) {
 				await vscode.commands.executeCommand("arduino.changeBoardType");
 				vscode.window.showInformationMessage(
@@ -356,6 +360,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 					});
 					newSketchFileName =
 						(newSketchFileName && newSketchFileName.trim()) || "";
+
 					if (newSketchFileName) {
 						const snippets = fs.readFileSync(
 							path.join(
@@ -410,11 +415,13 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 						),
 						{ placeHolder: "Select the main sketch file" },
 					);
+
 					if (chosen && chosen.label) {
 						this.sketch = chosen.label;
 					}
 				}
 			});
+
 		return this.sketch;
 	}
 

@@ -17,6 +17,7 @@ export default function exampleReducer(state = initalState, action) {
 				errorMessage: "",
 				requesting: true,
 			};
+
 		case actions.EXAMPLES_SUCCESS:
 			return {
 				...state,
@@ -24,6 +25,7 @@ export default function exampleReducer(state = initalState, action) {
 				requesting: false,
 				examples: action.examples,
 			};
+
 		case actions.EXAMPLES_FAILURE:
 			return {
 				...state,
@@ -31,6 +33,7 @@ export default function exampleReducer(state = initalState, action) {
 				requesting: false,
 				examples: [],
 			};
+
 		default:
 			return state;
 	}

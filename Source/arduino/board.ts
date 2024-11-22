@@ -15,7 +15,9 @@ export function parseBoardDescriptor(
 	const boardLineRegex = /([^.]+)\.(\S+)=(.+)/;
 
 	const result = new Map<string, IBoard>();
+
 	const lines = boardDescriptor.split(/(?:\r|\r\n|\n)/);
+
 	const menuMap = new Map<string, string>();
 
 	lines.forEach((line) => {
@@ -25,13 +27,16 @@ export function parseBoardDescriptor(
 		}
 
 		const match = boardLineRegex.exec(line);
+
 		if (match) {
 			if (line.startsWith("menu.")) {
 				menuMap.set(match[2], match[3]);
+
 				return;
 			}
 
 			let boardObject = result.get(match[1]);
+
 			if (!boardObject) {
 				boardObject = new Board(match[1], plat, menuMap);
 				result.set(boardObject.board, boardObject);
@@ -43,6 +48,7 @@ export function parseBoardDescriptor(
 			}
 		}
 	});
+
 	return result;
 }
 
@@ -71,10 +77,12 @@ export class Board implements IBoard {
 
 	public addParameter(key: string, value: string) {
 		const match = key.match(MENU_REGEX);
+
 		if (match) {
 			const existingItem = this._configItems.find(
 				(item) => item.id === match[1],
 			);
+
 			if (existingItem) {
 				if (!existingItem.selectedOption) {
 					existingItem.selectedOption = match[2];
@@ -82,6 +90,7 @@ export class Board implements IBoard {
 				const existingOption = existingItem.options.find(
 					(opt) => opt.id === match[2],
 				);
+
 				if (!existingOption) {
 					existingItem.options.push({
 						id: match[2],
@@ -128,23 +137,32 @@ export class Board implements IBoard {
 		// An empty or undefined config string resets the configuration
 		if (!configString) {
 			this.resetConfig();
+
 			return BoardConfigResult.Success;
 		}
 		const configSections = configString.split(",");
+
 		const keyValueRegex = /(\S+)=(\S+)/;
+
 		let result = BoardConfigResult.Success;
+
 		for (const section of configSections) {
 			const match = section.match(keyValueRegex);
+
 			if (!match) {
 				return BoardConfigResult.InvalidFormat;
 			}
 			const r = this.updateConfig(match[1], match[2]);
+
 			switch (r) {
 				case BoardConfigResult.SuccessNoChange:
 					result = r;
+
 					break;
+
 				case BoardConfigResult.Success:
 					break;
+
 				default:
 					return r;
 			}
@@ -159,6 +177,7 @@ export class Board implements IBoard {
 		const targetConfig = this._configItems.find(
 			(config) => config.id === configId,
 		);
+
 		if (!targetConfig) {
 			return BoardConfigResult.InvalidConfigID;
 		}
@@ -169,6 +188,7 @@ export class Board implements IBoard {
 			if (o.id === optionId) {
 				if (targetConfig.selectedOption !== optionId) {
 					targetConfig.selectedOption = optionId;
+
 					return BoardConfigResult.Success;
 				}
 				return BoardConfigResult.SuccessNoChange;
