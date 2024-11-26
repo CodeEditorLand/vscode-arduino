@@ -308,7 +308,7 @@
 	"description": "Arduino for Visual Studio Code. This extension is deprecated and no longer maintained.",
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/node": "22.9.1",
+		"@types/node": "22.10.0",
 		"@types/strftime": "0.9.8",
 		"@types/uuid": "10.0.0",
 		"@types/winreg": "1.2.36",
