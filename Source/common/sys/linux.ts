@@ -13,6 +13,7 @@ export function resolveArduinoPath(): string {
 		pathString = childProcess.execSync("readlink -f $(which arduino)", {
 			encoding: "utf8",
 		});
+
 		pathString = path.resolve(pathString).trim();
 
 		if (fileExistsSync(pathString)) {
@@ -56,5 +57,6 @@ export function findFile(fileName: string, cwd: string): string {
 	} catch (ex) {
 		// Ignore the errors.
 	}
+
 	return pathString;
 }

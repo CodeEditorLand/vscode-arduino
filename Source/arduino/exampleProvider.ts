@@ -39,6 +39,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 
 			return null;
 		}
+
 		if (!element) {
 			return this.createExampleItemList(this._examples);
 		} else {
@@ -48,6 +49,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 
 	private loadData() {
 		this._examples = null;
+
 		this._exampleManager.loadExamples().then((examples) => {
 			this._examples = examples;
 
@@ -55,6 +57,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 				// Reset the examples list to get the welcome message (defined in package.json) to appear.
 				this._examples = [];
 			}
+
 			this._onDidChangeTreeData.fire(null);
 		});
 	}
@@ -76,6 +79,7 @@ export class ExampleProvider implements vscode.TreeDataProvider<ExampleItem> {
 				result.push(new ExampleItem(example));
 			});
 		}
+
 		return result;
 	}
 }
@@ -85,6 +89,7 @@ class ExampleItem extends vscode.TreeItem {
 	 * These static fields/methods provide delay loading and a single copy of icons.
 	 */
 	private static _folderIcon;
+
 	private static _inoIcon;
 
 	private static getFolderIcon() {
@@ -94,6 +99,7 @@ class ExampleItem extends vscode.TreeItem {
 				dark: ExampleItem.getIconUri("Folder_16x_inverse.svg"),
 			};
 		}
+
 		return ExampleItem._folderIcon;
 	}
 
@@ -101,6 +107,7 @@ class ExampleItem extends vscode.TreeItem {
 		if (!ExampleItem._inoIcon) {
 			ExampleItem._inoIcon = ExampleItem.getIconUri("ino_16x.svg");
 		}
+
 		return ExampleItem._inoIcon;
 	}
 
@@ -126,6 +133,7 @@ class ExampleItem extends vscode.TreeItem {
 				command: "arduino.openExample",
 				arguments: [_example.path],
 			};
+
 			this.iconPath = ExampleItem.getInoIcon();
 		} else {
 			this.iconPath = ExampleItem.getFolderIcon();

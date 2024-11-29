@@ -244,9 +244,11 @@ function exampleFailure(errorMessage) {
 
 export function getBoardPackages(dispatch, update: boolean) {
 	dispatch(boardPackagesRequest());
+
 	API.getBoardPackages(update)
 		.then((response) => {
 			const { platforms } = <any>response;
+
 			dispatch(boardPackagesSuccess(JSONHelper.retrocycle(platforms)));
 		})
 		.catch((error) => {
@@ -263,6 +265,7 @@ export function installBoard(
 	callback?: () => void,
 ) {
 	dispatch(installBoardRequest(boardName));
+
 	API.installBoard(packageName, arch, version)
 		.then((response) => {
 			dispatch(installBoardSuccess());
@@ -283,6 +286,7 @@ export function uninstallBoard(
 	callback?: () => void,
 ) {
 	dispatch(uninstallBoardRequest(boardName));
+
 	API.uninstallBoard(boardName, packagePath)
 		.then((response) => {
 			dispatch(uninstallBoardSuccess());
@@ -298,9 +302,11 @@ export function uninstallBoard(
 
 export function getLibraries(dispatch, update: boolean, callback?: () => void) {
 	dispatch(librariesRequest());
+
 	API.getLibraries(update)
 		.then((response) => {
 			const { libraries } = <any>response;
+
 			dispatch(librariesSuccess(libraries));
 
 			if (callback) {
@@ -323,6 +329,7 @@ export function installLibrary(
 	callback?: (error?) => void,
 ) {
 	dispatch(installLibraryRequest(libraryName));
+
 	API.installLibrary(libraryName, version)
 		.then((response) => {
 			dispatch(installLibrarySuccess(libraryName));
@@ -347,6 +354,7 @@ export function uninstallLibrary(
 	callback?: (error?) => void,
 ) {
 	dispatch(uninstallLibraryRequest(libraryName));
+
 	API.uninstallLibrary(libraryName, libraryPath)
 		.then((response) => {
 			dispatch(uninstallLibrarySuccess(libraryName));
@@ -366,9 +374,11 @@ export function uninstallLibrary(
 
 export function getInstalledBoards(dispatch, callback?: () => void) {
 	dispatch(installedBoardsRequest());
+
 	API.getInstalledBoards()
 		.then((response) => {
 			const { installedBoards } = <any>response;
+
 			dispatch(installedBoardsSuccess(installedBoards));
 
 			if (callback) {
@@ -386,9 +396,11 @@ export function getInstalledBoards(dispatch, callback?: () => void) {
 
 export function getConfigItems(dispatch, callback?: () => void) {
 	dispatch(configItemsRequest());
+
 	API.getConfigItems()
 		.then((response) => {
 			const { configitems } = <any>response;
+
 			dispatch(configItemsSuccess(configitems));
 
 			if (callback) {
@@ -406,9 +418,11 @@ export function getConfigItems(dispatch, callback?: () => void) {
 
 export function getExamples(dispatch) {
 	dispatch(examplesRequest());
+
 	API.getExamples()
 		.then((response) => {
 			const { examples } = <any>response;
+
 			dispatch(exampleSuccess(examples));
 		})
 		.catch((error) => {

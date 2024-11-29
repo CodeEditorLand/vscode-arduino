@@ -33,6 +33,7 @@ export default class UserNotificationTransport extends winston.Transport {
 				);
 			}
 		}
+
 		super.emit("logged");
 
 		if (callback) {

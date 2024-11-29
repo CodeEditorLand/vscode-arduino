@@ -9,6 +9,7 @@ import { Uri } from "vscode";
 
 export default class LocalWebServer {
 	private app = express();
+
 	private server;
 
 	constructor(private _extensionPath: string) {
@@ -16,7 +17,9 @@ export default class LocalWebServer {
 			"/",
 			express.static(path.join(this._extensionPath, "./out/views")),
 		);
+
 		this.app.use(bodyParser.json());
+
 		this.server = http.createServer(this.app);
 	}
 
@@ -57,6 +60,7 @@ export default class LocalWebServer {
 				console.log(
 					`Express server listening on port: ${this.server.address().port}`,
 				);
+
 				resolve();
 			});
 		});

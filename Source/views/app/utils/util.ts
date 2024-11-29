@@ -3,6 +3,7 @@
 
 export function parseGroups(sourceArray: any[], key): any[] {
 	const groups = {};
+
 	sourceArray.forEach((item) => {
 		let groupName = null;
 
@@ -11,6 +12,7 @@ export function parseGroups(sourceArray: any[], key): any[] {
 		} else {
 			groupName = item[key];
 		}
+
 		groupName = [].concat(groupName);
 
 		for (const group of groupName) {

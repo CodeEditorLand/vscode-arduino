@@ -15,20 +15,29 @@ import { VscodeSettings } from "./vscodeSettings";
 
 export interface IArduinoSettings {
 	arduinoPath: string;
+
 	commandPath: string;
 
 	defaultExamplePath: string;
+
 	packagePath: string;
 
 	defaultPackagePath: string;
 
 	defaultLibPath: string;
+
 	sketchbookPath: string;
+
 	preferencePath: string;
+
 	preferences: Map<string, string>;
+
 	useArduinoCli: boolean;
+
 	usingBundledArduinoCli: boolean;
+
 	analyzeOnSettingChange: boolean;
+
 	reloadPreferences(): void;
 }
 
@@ -61,8 +70,11 @@ export class ArduinoSettings implements IArduinoSettings {
 
 	public async initialize() {
 		const platform = os.platform();
+
 		this._commandPath = VscodeSettings.getInstance().commandPath;
+
 		this._useArduinoCli = VscodeSettings.getInstance().useArduinoCli;
+
 		await this.tryResolveArduinoPath();
 
 		if (platform === "win32") {
@@ -231,6 +243,7 @@ export class ArduinoSettings implements IArduinoSettings {
 		if (!this._preferences) {
 			this._preferences = util.parseConfigFile(this.preferencePath);
 		}
+
 		return this._preferences;
 	}
 
@@ -241,6 +254,7 @@ export class ArduinoSettings implements IArduinoSettings {
 	public get usingBundledArduinoCli() {
 		return this._usingBundledArduinoCli;
 	}
+
 	public get analyzeOnSettingChange(): boolean {
 		return VscodeSettings.getInstance().analyzeOnSettingChange;
 	}
@@ -280,6 +294,7 @@ export class ArduinoSettings implements IArduinoSettings {
 				"Personal",
 			);
 		} catch (ex) {}
+
 		if (!folder) {
 			folder = path.join(process.env.USERPROFILE, "Documents");
 		}
@@ -333,6 +348,7 @@ export class ArduinoSettings implements IArduinoSettings {
 		if (!name) {
 			return undefined;
 		}
+
 		return this._context.asAbsolutePath(
 			path.join("assets", "platform", platform, "arduino-cli", name),
 		);
@@ -359,6 +375,7 @@ export class ArduinoSettings implements IArduinoSettings {
 
 				try {
 					await fs.access(bundledPath, fsconstants.X_OK);
+
 					isExecutable = true;
 				} catch {
 					// Nothing to do. isExecutable is already false.
@@ -379,8 +396,11 @@ export class ArduinoSettings implements IArduinoSettings {
 				}
 
 				this._usingBundledArduinoCli = true;
+
 				Logger.traceUserData("using-bundled-arduino-cli");
+
 				this._arduinoPath = path.dirname(bundledPath);
+
 				this._commandPath = path.basename(bundledPath);
 			} else {
 				// 3 & 4. Resolve arduino path from system environment variables and usual software installation directory.

@@ -94,6 +94,7 @@ export function decycle(object, replacer) {
 
 			if (Array.isArray(value)) {
 				nu = [];
+
 				value.forEach(function (element, i) {
 					nu[i] = derez(element, path + "[" + i + "]");
 				});
@@ -101,6 +102,7 @@ export function decycle(object, replacer) {
 				// If it is an object, replicate the object.
 
 				nu = {};
+
 				Object.keys(value).forEach(function (name) {
 					nu[name] = derez(
 						value[name],
@@ -108,8 +110,10 @@ export function decycle(object, replacer) {
 					);
 				});
 			}
+
 			return nu;
 		}
+
 		return value;
 	})(object, "$");
 }

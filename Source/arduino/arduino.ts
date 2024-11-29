@@ -74,6 +74,7 @@ export class ArduinoApp {
 	 */
 	constructor(private _settings: IArduinoSettings) {
 		const analysisDelayMs = 1000 * 3;
+
 		this._analysisManager = new AnalysisManager(
 			() => this._building,
 			async () => {
@@ -92,9 +93,11 @@ export class ArduinoApp {
 			try {
 				// Use empty pref value to initialize preference.txt file
 				await this.setPref("boardsmanager.additional.urls", "");
+
 				this._settings.reloadPreferences(); // reload preferences.
 			} catch (ex) {}
 		}
+
 		if (
 			force ||
 			!util.fileExistsSync(
@@ -116,8 +119,11 @@ export class ArduinoApp {
 			};
 
 			const dc = DeviceContext.getInstance();
+
 			dc.onChangeBoard(requestAnalysis);
+
 			dc.onChangeConfiguration(requestAnalysis);
+
 			dc.onChangeSketch(requestAnalysis);
 		}
 	}
@@ -153,6 +159,7 @@ export class ArduinoApp {
 				preferences.get("boardsmanager.additional.urls"),
 			);
 		}
+
 		return util.union(settingsUrls, preferencesUrls);
 	}
 
@@ -221,6 +228,7 @@ export class ArduinoApp {
 			})
 			.catch((reason) => {
 				this._building = false;
+
 				logger.notifyUserError(
 					"ArduinoApp.build",
 					reason,
@@ -236,6 +244,7 @@ export class ArduinoApp {
 		if (!ArduinoWorkspace.rootPath) {
 			return;
 		}
+
 		const dc = DeviceContext.getInstance();
 
 		const appPath = path.join(ArduinoWorkspace.rootPath, dc.sketch);
@@ -255,6 +264,7 @@ export class ArduinoApp {
 			// Open the sketch and bring up it to current visible view.
 			const textDocument =
 				await vscode.workspace.openTextDocument(appPath);
+
 			await vscode.window.showTextDocument(
 				textDocument,
 				vscode.ViewColumn.One,
@@ -314,18 +324,22 @@ export class ArduinoApp {
 				if (util.directoryExistsSync(packagePath)) {
 					util.rmdirRecursivelySync(packagePath);
 				}
+
 				arduinoChannel.start(`Install package - ${packageName}...`);
 			} catch (error) {
 				arduinoChannel.start(`Install package - ${packageName} failed under directory : ${error.path}${os.EOL}
                                       Please make sure the folder is not occupied by other procedures .`);
+
 				arduinoChannel.error(
 					`Error message - ${error.message}${os.EOL}`,
 				);
+
 				arduinoChannel.error(`Exit with code=${error.code}${os.EOL}`);
 
 				return;
 			}
 		}
+
 		arduinoChannel.info(
 			`${packageName}${arch && ":" + arch}${version && ":" + version}`,
 		);
@@ -358,6 +372,7 @@ export class ArduinoApp {
 					{ channel: showOutput ? arduinoChannel.channel : null },
 				);
 			}
+
 			if (updatingIndex) {
 				arduinoChannel.end("Updated package index files.");
 			} else {
@@ -383,7 +398,9 @@ export class ArduinoApp {
 
 	public uninstallBoard(boardName: string, packagePath: string) {
 		arduinoChannel.start(`Uninstall board package - ${boardName}...`);
+
 		util.rmdirRecursivelySync(packagePath);
+
 		arduinoChannel.end(`Uninstalled board package - ${boardName}${os.EOL}`);
 	}
 
@@ -408,6 +425,7 @@ export class ArduinoApp {
 		} else {
 			arduinoChannel.start(`Install library - ${libName}`);
 		}
+
 		try {
 			if (this.useArduinoCli()) {
 				if (updatingIndex) {
@@ -446,6 +464,7 @@ export class ArduinoApp {
 					},
 				);
 			}
+
 			if (updatingIndex) {
 				arduinoChannel.end("Updated library index files.");
 			} else {
@@ -469,7 +488,9 @@ export class ArduinoApp {
 
 	public uninstallLibrary(libName: string, libPath: string) {
 		arduinoChannel.start(`Remove library - ${libName}`);
+
 		util.rmdirRecursivelySync(libPath);
+
 		arduinoChannel.end(`Removed library - ${libName}${os.EOL}`);
 	}
 
@@ -486,7 +507,9 @@ export class ArduinoApp {
 				) {
 					return candidateName;
 				}
+
 				counter++;
+
 				candidateName = `${name}_${counter}`;
 			}
 		}
@@ -500,19 +523,25 @@ export class ArduinoApp {
 		if (!util.directoryExistsSync(sketchPath)) {
 			util.mkdirRecursivelySync(sketchPath);
 		}
+
 		let destExample = "";
 
 		if (util.directoryExistsSync(example)) {
 			destExample = tmpName(
 				path.join(sketchPath, path.basename(example)),
 			);
+
 			util.cp(example, destExample);
 		} else if (util.fileExistsSync(example)) {
 			const exampleName = path.basename(example, path.extname(example));
+
 			destExample = tmpName(path.join(sketchPath, exampleName));
+
 			util.mkdirRecursivelySync(destExample);
+
 			util.cp(example, path.join(destExample, path.basename(example)));
 		}
+
 		if (destExample) {
 			// Step 2: Scaffold the example project to an arduino project.
 			const items = fs.readdirSync(destExample);
@@ -537,7 +566,9 @@ export class ArduinoApp {
 					destExample,
 					constants.ARDUINO_CONFIG_FILE,
 				);
+
 				util.mkdirRecursivelySync(path.dirname(arduinoConfigFilePath));
+
 				fs.writeFileSync(
 					arduinoConfigFilePath,
 					JSON.stringify(arduinoJson, null, 4),
@@ -551,6 +582,7 @@ export class ArduinoApp {
 				true,
 			);
 		}
+
 		return destExample;
 	}
 
@@ -621,11 +653,14 @@ export class ArduinoApp {
 		// On Windows you have full cmd support.
 		if (os.platform() === "win32") {
 			args = [];
+
 			cmd = cmdline;
 		} else {
 			args = ["-c", cmdline];
+
 			cmd = "bash";
 		}
+
 		try {
 			await util.spawn(
 				cmd,
@@ -643,12 +678,14 @@ export class ArduinoApp {
 				: ex.code
 					? `Exit code = ${ex.code}`
 					: JSON.stringify(ex);
+
 			arduinoChannel.error(
 				`Running ${what}-build command failed: ${os.EOL}${msg}`,
 			);
 
 			return false;
 		}
+
 		return true;
 	}
 
@@ -701,8 +738,10 @@ export class ArduinoApp {
 					new Error(constants.messages.NO_BOARD_SELECTED),
 				);
 			}
+
 			return false;
 		}
+
 		const boardDescriptor = this.boardManager.currentBoard.getBuildConfig();
 
 		if (this.useArduinoCli()) {
@@ -729,6 +768,7 @@ export class ArduinoApp {
 				// Analyze runs non interactively
 				return false;
 			}
+
 			if (!(await dc.resolveMainSketch())) {
 				vscode.window.showErrorMessage(
 					"No sketch file was found. Please specify the sketch in the arduino.json file",
@@ -809,6 +849,7 @@ export class ArduinoApp {
 
 				return false;
 			}
+
 			if (!dc.port) {
 				await selectSerial();
 
@@ -838,11 +879,13 @@ export class ArduinoApp {
 
 				return false;
 			}
+
 			if (!dc.port) {
 				await selectSerial();
 
 				return false;
 			}
+
 			if (!this.useArduinoCli()) {
 				arduinoChannel.error(
 					"This command is only available when using the Arduino CLI",
@@ -891,6 +934,7 @@ export class ArduinoApp {
 		if (VscodeSettings.getInstance().clearOutputOnBuild) {
 			arduinoChannel.clear();
 		}
+
 		arduinoChannel.start(`${buildMode} sketch '${dc.sketch}'`);
 
 		if (buildDir || dc.output) {
@@ -922,6 +966,7 @@ export class ArduinoApp {
 		} else {
 			const msg =
 				"Output path is not specified. Unable to reuse previously compiled files. Build will be slower. See README.";
+
 			arduinoChannel.warning(msg);
 		}
 
@@ -939,6 +984,7 @@ export class ArduinoApp {
 		if (dc.port) {
 			env["VSCA_SERIAL"] = dc.port;
 		}
+
 		if (buildDir) {
 			env["VSCA_BUILD_DIR"] = buildDir;
 		}
@@ -960,6 +1006,7 @@ export class ArduinoApp {
 		) {
 			restoreSerialMonitor =
 				await SerialMonitor.getInstance().closeSerialMonitor(dc.port);
+
 			UsbDetector.getInstance().pauseListening();
 		}
 
@@ -974,6 +1021,7 @@ export class ArduinoApp {
 			if (result === "ok") {
 				ret = await this.runPrePostBuildCommand(dc, env, "post");
 			}
+
 			await cocopa.conclude();
 
 			if (
@@ -986,6 +1034,7 @@ export class ArduinoApp {
 					await SerialMonitor.getInstance().openSerialMonitor(true);
 				}
 			}
+
 			return ret;
 		};
 
@@ -1008,9 +1057,13 @@ export class ArduinoApp {
 
 						break;
 					}
+
 					const line = buffer.substring(0, pos + eol.length);
+
 					buffer = buffer.substring(pos + eol.length);
+
 					startIndex = 0;
+
 					callback(line);
 				}
 			};
@@ -1020,6 +1073,7 @@ export class ArduinoApp {
 			if (cocopa.callback) {
 				cocopa.callback(line);
 			}
+
 			if (verbose) {
 				arduinoChannel.channel.append(line);
 			} else {
@@ -1037,9 +1091,12 @@ export class ArduinoApp {
 				if (line.length <= 0) {
 					return;
 				}
+
 				line = line.replace(/(?:\r|\r\n|\n)+/g, os.EOL);
+
 				line = `${line}${os.EOL}`;
 			}
+
 			if (!verbose) {
 				// Don't spill log with spurious info from the backend. This
 				// list could be fetched from a config file to accommodate
@@ -1058,6 +1115,7 @@ export class ArduinoApp {
 					}
 				}
 			}
+
 			arduinoChannel.channel.append(line);
 		});
 
@@ -1083,6 +1141,7 @@ export class ArduinoApp {
 						`${buildMode} sketch '${dc.sketch}'${os.EOL}`,
 					);
 				}
+
 				return ret;
 			},
 			async (reason) => {
@@ -1091,6 +1150,7 @@ export class ArduinoApp {
 				const msg = reason.code
 					? `Exit with code=${reason.code}`
 					: JSON.stringify(reason);
+
 				arduinoChannel.error(
 					`${buildMode} sketch '${dc.sketch}': ${msg}${os.EOL}`,
 				);
@@ -1105,7 +1165,9 @@ export class ArduinoApp {
 		options: child_process.SpawnOptions = {},
 		output?: {
 			channel?: vscode.OutputChannel;
+
 			stdout?: (s: string) => void;
+
 			stderr?: (s: string) => void;
 		},
 	): Thenable<object> {

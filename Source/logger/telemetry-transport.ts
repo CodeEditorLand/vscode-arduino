@@ -9,7 +9,9 @@ import { LogLevel } from "./logger";
 
 interface IPackageInfo {
 	name: string;
+
 	version: string;
+
 	aiKey: string;
 }
 
@@ -32,6 +34,7 @@ export class TelemetryTransport extends winston.Transport {
 
 	constructor(options: any) {
 		super({ ...options, context: null });
+
 		this.name = "telemetry";
 
 		if (!options.context) {
@@ -41,6 +44,7 @@ export class TelemetryTransport extends winston.Transport {
 
 			return;
 		}
+
 		const packageInfo = getPackageInfo(options.context);
 
 		if (!packageInfo.aiKey) {
@@ -50,6 +54,7 @@ export class TelemetryTransport extends winston.Transport {
 
 			return;
 		}
+
 		this.reporter = new TelemetryReporter(
 			packageInfo.name,
 			packageInfo.version,
@@ -93,6 +98,7 @@ export class TelemetryTransport extends winston.Transport {
 						}
 					}
 				}
+
 				if (level === LogLevel.Info) {
 					this.reporter.sendTelemetryEvent(
 						message,
@@ -113,6 +119,7 @@ export class TelemetryTransport extends winston.Transport {
 				);
 			}
 		}
+
 		super.emit("logged");
 
 		if (callback) {

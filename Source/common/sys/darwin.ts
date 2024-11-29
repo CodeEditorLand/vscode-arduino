@@ -25,6 +25,7 @@ export function resolveArduinoPath(): string {
 			break;
 		}
 	}
+
 	return result || "";
 }
 
@@ -62,5 +63,6 @@ export function findFile(fileName: string, cwd: string): string {
 	} catch (ex) {
 		// Ignore the errors.
 	}
+
 	return pathString;
 }

@@ -16,7 +16,9 @@ import { DeviceContext } from "./deviceContext";
 
 class ArduinoActivator {
 	public context: vscode.ExtensionContext;
+
 	private _initializePromise: Promise<void>;
+
 	public async activate() {
 		if (this._initializePromise) {
 			await this._initializePromise;
@@ -26,6 +28,7 @@ class ArduinoActivator {
 
 		this._initializePromise = (async () => {
 			const arduinoSettings = new ArduinoSettings(this.context);
+
 			await arduinoSettings.initialize();
 
 			const arduinoApp = new ArduinoApp(arduinoSettings);
@@ -40,6 +43,7 @@ class ArduinoActivator {
 
 			// TODO: After use the device.json config, should remove the dependency on the ArduinoApp object.
 			const deviceContext = DeviceContext.getInstance();
+
 			await deviceContext.loadContext();
 
 			if (!analyzeOnOpen) {
@@ -53,31 +57,39 @@ class ArduinoActivator {
 				arduinoSettings,
 				arduinoApp,
 			);
+
 			ArduinoContext.boardManager = arduinoApp.boardManager;
+
 			await arduinoApp.boardManager.loadPackages();
+
 			arduinoApp.libraryManager = new LibraryManager(
 				arduinoSettings,
 				arduinoApp,
 			);
+
 			arduinoApp.exampleManager = new ExampleManager(
 				arduinoSettings,
 				arduinoApp,
 			);
+
 			arduinoApp.programmerManager = new ProgrammerManager(
 				arduinoSettings,
 				arduinoApp,
 			);
+
 			ArduinoContext.arduinoApp = arduinoApp;
 
 			const exampleProvider = new ExampleProvider(
 				arduinoApp.exampleManager,
 				arduinoApp.boardManager,
 			);
+
 			vscode.window.registerTreeDataProvider(
 				"arduinoExampleExplorer",
 				exampleProvider,
 			);
 		})();
+
 		await this._initializePromise;
 	}
 }

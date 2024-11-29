@@ -11,8 +11,11 @@ import { IArduinoSettings } from "./arduinoSettings";
 
 export interface IExampleNode {
 	name: string;
+
 	path: string;
+
 	isLeaf: boolean;
+
 	children: IExampleNode[];
 }
 
@@ -113,6 +116,7 @@ export class ExampleManager {
 		if (!util.directoryExistsSync(rootPath)) {
 			return [];
 		}
+
 		const exampleFolders = glob.sync(path.join(rootPath, "**/**/"));
 		// exampleFolders looks like as follows:
 		// ["C:/Program Files (x86)/Arduino/examples/",
@@ -130,6 +134,7 @@ export class ExampleManager {
 		};
 
 		const exampleMap = new Map<string, IExampleNode>();
+
 		exampleMap.set(path.resolve(exampleFolders[0]), rootNode);
 
 		for (let i = 1; i < exampleFolders.length; i++) {
@@ -147,7 +152,9 @@ export class ExampleManager {
 					isLeaf: this.isExampleFolder(currentPath),
 					children: [],
 				};
+
 				exampleMap.set(currentPath, currentExample);
+
 				parentExample.children.push(currentExample);
 			}
 		}
@@ -167,6 +174,7 @@ export class ExampleManager {
 		if (!util.directoryExistsSync(rootPath)) {
 			return [];
 		}
+
 		const libraries = util.readdirSync(rootPath, true);
 
 		for (const library of libraries) {
@@ -223,6 +231,7 @@ export class ExampleManager {
 				children: inCompatibles,
 			});
 		}
+
 		return examples;
 	}
 
@@ -240,6 +249,7 @@ export class ExampleManager {
 		if (!architectures) {
 			return false;
 		}
+
 		const currentBoard = this._arduinoApp.boardManager.currentBoard;
 
 		if (!currentBoard) {

@@ -19,6 +19,7 @@ function versionArrayCompare(a: any[], b: any[]) {
 			} else if (nb > na) {
 				return -1;
 			}
+
 			const compare = (isNaN(a[i]) ? -1 : 1) - (isNaN(b[i]) ? -1 : 1);
 
 			if (compare !== 0) {
@@ -49,5 +50,6 @@ function versionArrayCompare(a: any[], b: any[]) {
 			}
 		}
 	}
+
 	return a.length - b.length;
 }

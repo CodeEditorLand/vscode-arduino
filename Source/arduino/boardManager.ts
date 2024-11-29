@@ -49,13 +49,17 @@ export class BoardManager {
 			vscode.StatusBarAlignment.Right,
 			constants.statusBarPriority.BOARD,
 		);
+
 		this._boardConfigStatusBar.command = "arduino.showBoardConfig";
+
 		this._boardConfigStatusBar.tooltip = "Show Board Config";
 	}
 
 	public async loadPackages(update: boolean = false) {
 		this._packages = [];
+
 		this._platforms = [];
+
 		this._installedPlatforms = [];
 
 		const additionalUrls = this._arduinoApp.getAdditionalUrls();
@@ -63,6 +67,7 @@ export class BoardManager {
 		if (update) {
 			// Update index files.
 			await this.setPreferenceUrls(additionalUrls);
+
 			await this._arduinoApp.initialize(true);
 		}
 
@@ -77,6 +82,7 @@ export class BoardManager {
 			if (!indexFileName) {
 				continue;
 			}
+
 			if (
 				!update &&
 				!util.fileExistsSync(
@@ -84,8 +90,10 @@ export class BoardManager {
 				)
 			) {
 				await this.setPreferenceUrls(additionalUrls);
+
 				await this._arduinoApp.initialize(true);
 			}
+
 			this.loadPackageContent(indexFileName);
 		}
 
@@ -94,12 +102,17 @@ export class BoardManager {
 
 		// Load all supported board types
 		this.loadInstalledBoards();
+
 		this.loadInstalledProgrammers();
+
 		this.updateStatusBar();
+
 		this._boardConfigStatusBar.show();
 
 		const dc = DeviceContext.getInstance();
+
 		dc.onChangeBoard(() => this.onDeviceContextBoardChange());
+
 		dc.onChangeConfiguration(() =>
 			this.onDeviceContextConfigurationChange(),
 		);
@@ -107,6 +120,7 @@ export class BoardManager {
 		// load initial board from DeviceContext by emulating
 		// a board change event.
 		this.onDeviceContextBoardChange();
+
 		this.updateStatusBar(true);
 	}
 
@@ -154,12 +168,15 @@ export class BoardManager {
 
 		if (!(allUrls.indexOf(indexUri) >= 0)) {
 			allUrls = allUrls.concat(indexUri);
+
 			VscodeSettings.getInstance().updateAdditionalUrls(allUrls);
+
 			await this._arduinoApp.setPref(
 				"boardsmanager.additional.urls",
 				this._arduinoApp.getAdditionalUrls().join(","),
 			);
 		}
+
 		return true;
 	}
 
@@ -222,7 +239,9 @@ export class BoardManager {
 				installedPlatforms.push(plat);
 			} else {
 				find.defaultPlatform = plat.defaultPlatform;
+
 				find.version = plat.version;
+
 				find.rootBoardPath = plat.rootBoardPath;
 			}
 		};
@@ -232,6 +251,7 @@ export class BoardManager {
 		const manuallyInstalled = this.getManuallyInstalledPlatforms();
 
 		customPlatforms.forEach(mergePlatform);
+
 		manuallyInstalled.forEach(mergePlatform);
 
 		return installedPlatforms;
@@ -247,6 +267,7 @@ export class BoardManager {
 		) {
 			return;
 		}
+
 		const packageContent = fs.readFileSync(
 			path.join(this._settings.packagePath, indexFileName),
 			"utf8",
@@ -311,6 +332,7 @@ export class BoardManager {
 					plat.versions = [plat.version];
 					// Clear the version information since the plat will be used to contain all supported versions.
 					plat.version = "";
+
 					this._platforms.push(plat);
 				}
 			});
@@ -349,10 +371,14 @@ export class BoardManager {
 
 				if (!existingPlatform.installedVersion) {
 					existingPlatform.installedVersion = newPlatform.version;
+
 					existingPlatform.rootBoardPath = newPlatform.rootBoardPath;
+
 					this._installedPlatforms.push(existingPlatform);
 				}
+
 				this.loadInstalledBoardsFromPlatform(existingPlatform);
+
 				this.loadInstalledProgrammersFromPlatform(existingPlatform);
 			}
 		}
@@ -385,6 +411,7 @@ export class BoardManager {
 		if (boardEqual(newBoard, this._currentBoard)) {
 			return;
 		}
+
 		if (newBoard) {
 			this._currentBoard = newBoard;
 
@@ -405,12 +432,15 @@ export class BoardManager {
 				}
 			} else {
 				this._currentBoard.resetConfig();
+
 				dc.configuration = undefined;
 			}
 		} else {
 			this._currentBoard = null;
 		}
+
 		this._onBoardTypeChanged.fire();
+
 		this.updateStatusBar();
 	}
 
@@ -459,6 +489,7 @@ export class BoardManager {
 
 				break;
 		}
+
 		vscode.window.showWarningMessage(
 			`Invalid board configuration detected in configuration file${what}. Falling back to defaults.`,
 		);
@@ -466,6 +497,7 @@ export class BoardManager {
 
 	private loadInstalledPlatforms() {
 		const installed = this.getInstalledPlatforms();
+
 		installed.forEach((platform) => {
 			const existingPlatform = this._platforms.find((_plat) => {
 				return (
@@ -479,11 +511,14 @@ export class BoardManager {
 
 				if (!existingPlatform.installedVersion) {
 					existingPlatform.installedVersion = platform.version;
+
 					existingPlatform.rootBoardPath = platform.rootBoardPath;
+
 					this._installedPlatforms.push(existingPlatform);
 				}
 			} else {
 				platform.installedVersion = platform.version;
+
 				this._installedPlatforms.push(platform);
 			}
 		});
@@ -505,6 +540,7 @@ export class BoardManager {
 			if (!packageBundled) {
 				return defaultPlatforms;
 			}
+
 			const bundledObject = JSON.parse(packageBundled);
 
 			if (bundledObject && bundledObject.packages) {
@@ -527,6 +563,7 @@ export class BoardManager {
 				}
 			}
 		} catch (ex) {}
+
 		return defaultPlatforms;
 	}
 
@@ -546,6 +583,7 @@ export class BoardManager {
 		if (!dirs || dirs.length < 1) {
 			return customPlatforms;
 		}
+
 		for (const packageName of dirs) {
 			const architectures = util.filterJunk(
 				util.readdirSync(path.join(hardwareFolder, packageName), true),
@@ -554,6 +592,7 @@ export class BoardManager {
 			if (!architectures || architectures.length < 1) {
 				continue;
 			}
+
 			architectures.forEach((architecture) => {
 				const platformFolder = path.join(
 					hardwareFolder,
@@ -572,6 +611,7 @@ export class BoardManager {
 					const configs = util.parseConfigFile(
 						path.join(platformFolder, "platform.txt"),
 					);
+
 					customPlatforms.push({
 						packageName,
 						architecture,
@@ -586,6 +626,7 @@ export class BoardManager {
 				}
 			});
 		}
+
 		return customPlatforms;
 	}
 
@@ -600,6 +641,7 @@ export class BoardManager {
 		if (!util.directoryExistsSync(rootPackagePath)) {
 			return manuallyInstalled;
 		}
+
 		const dirs = util.filterJunk(util.readdirSync(rootPackagePath, true)); // in Mac, filter .DS_Store file.
 		for (const packageName of dirs) {
 			const archPath = path.join(
@@ -612,9 +654,11 @@ export class BoardManager {
 			if (!util.directoryExistsSync(archPath)) {
 				continue;
 			}
+
 			const architectures = util.filterJunk(
 				util.readdirSync(archPath, true),
 			);
+
 			architectures.forEach((architecture) => {
 				const allVersion = util.filterJunk(
 					util.readdirSync(path.join(archPath, architecture), true),
@@ -635,11 +679,13 @@ export class BoardManager {
 				}
 			});
 		}
+
 		return manuallyInstalled;
 	}
 
 	private loadInstalledBoards(): void {
 		this._boards = new Map<string, IBoard>();
+
 		this._installedPlatforms.forEach((plat) => {
 			this.loadInstalledBoardsFromPlatform(plat);
 		});
@@ -653,6 +699,7 @@ export class BoardManager {
 			);
 
 			const res = parseBoardDescriptor(boardContent, plat);
+
 			res.forEach((bd) => {
 				this._boards.set(bd.key, bd);
 			});
@@ -661,6 +708,7 @@ export class BoardManager {
 
 	private loadInstalledProgrammers(): void {
 		this._programmers = new Map<string, IProgrammer>();
+
 		this._installedPlatforms.forEach((plat) => {
 			this.loadInstalledProgrammersFromPlatform(plat);
 		});
@@ -678,6 +726,7 @@ export class BoardManager {
 			);
 
 			const res = parseProgrammerDescriptor(programmersContent, plat);
+
 			res.forEach((prog) => {
 				this._programmers.set(prog.name, prog);
 			});
@@ -686,6 +735,7 @@ export class BoardManager {
 
 	private listBoards(): IBoard[] {
 		const result = [];
+
 		this._boards.forEach((b) => {
 			result.push(b);
 		});
@@ -697,11 +747,13 @@ export class BoardManager {
 		if (!uriString) {
 			return;
 		}
+
 		const normalizedUrl = url.parse(uriString);
 
 		if (!normalizedUrl) {
 			return;
 		}
+
 		return normalizedUrl.pathname.substr(
 			normalizedUrl.pathname.lastIndexOf("/") + 1,
 		);

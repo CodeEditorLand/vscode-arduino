@@ -30,19 +30,26 @@ export class SerialMonitor implements vscode.Disposable {
 		if (SerialMonitor._serialMonitor === null) {
 			SerialMonitor._serialMonitor = new SerialMonitor();
 		}
+
 		return SerialMonitor._serialMonitor;
 	}
 
 	private static _serialMonitor: SerialMonitor = null;
 
 	private serialMonitorApi: SerialMonitorApi | undefined;
+
 	private extensionContext: vscode.ExtensionContext;
+
 	private currentPort: string;
+
 	private activePort: Port | undefined;
+
 	private lastSelectedBaudRate: number = 115200; // Same default as Arduino.
 
 	private openPortStatusBar: vscode.StatusBarItem;
+
 	private portsStatusBar: vscode.StatusBarItem;
+
 	private timestampFormatStatusBar: vscode.StatusBarItem;
 
 	public async initialize(extensionContext: vscode.ExtensionContext) {
@@ -52,17 +59,24 @@ export class SerialMonitor implements vscode.Disposable {
 			vscode.StatusBarAlignment.Right,
 			constants.statusBarPriority.PORT,
 		);
+
 		this.portsStatusBar.command = "arduino.selectSerialPort";
+
 		this.portsStatusBar.tooltip = "Select Serial Port";
+
 		this.portsStatusBar.show();
 
 		this.openPortStatusBar = vscode.window.createStatusBarItem(
 			vscode.StatusBarAlignment.Right,
 			constants.statusBarPriority.OPEN_PORT,
 		);
+
 		this.openPortStatusBar.command = "arduino.openSerialMonitor";
+
 		this.openPortStatusBar.text = `$(plug)`;
+
 		this.openPortStatusBar.tooltip = "Open Serial Monitor";
+
 		this.openPortStatusBar.show();
 
 		// This statusbar button will open the timestamp format setting in the serial monitor extension.
@@ -70,13 +84,17 @@ export class SerialMonitor implements vscode.Disposable {
 			vscode.StatusBarAlignment.Right,
 			constants.statusBarPriority.TIMESTAMP_FORMAT,
 		);
+
 		this.timestampFormatStatusBar.command = "arduino.changeTimestampFormat";
+
 		this.timestampFormatStatusBar.tooltip = `Change timestamp format`;
+
 		this.timestampFormatStatusBar.text = `$(watch)`;
 
 		this.updatePortListStatus();
 
 		const dc = DeviceContext.getInstance();
+
 		dc.onChangePort(() => {
 			this.updatePortListStatus();
 		});
@@ -122,6 +140,7 @@ export class SerialMonitor implements vscode.Disposable {
 
 		if (chosen && chosen.label) {
 			this.currentPort = chosen.label;
+
 			this.updatePortListStatus(this.currentPort);
 
 			return chosen.label;
@@ -149,12 +168,15 @@ export class SerialMonitor implements vscode.Disposable {
 
 			return undefined;
 		}
+
 		if (!parseInt(chosen, 10)) {
 			Logger.warn("Serial Monitor has not been started");
 
 			return undefined;
 		}
+
 		const selectedRate: number = parseInt(chosen, 10);
+
 		this.lastSelectedBaudRate = selectedRate;
 
 		return selectedRate;
@@ -175,6 +197,7 @@ export class SerialMonitor implements vscode.Disposable {
 					return;
 				}
 			}
+
 			if (!this.currentPort) {
 				return;
 			}
@@ -194,10 +217,13 @@ export class SerialMonitor implements vscode.Disposable {
 				stopBits: StopBits.One,
 				parity: Parity.None,
 			});
+
 			this.activePort.onClosed(() => {
 				this.updatePortStatus(false);
+
 				this.activePort = undefined;
 			});
+
 			this.updatePortStatus(true);
 		} catch (err) {
 			Logger.warn("Serial Monitor failed to open");
@@ -222,6 +248,7 @@ export class SerialMonitor implements vscode.Disposable {
 				port ?? this.currentPort,
 			);
 		}
+
 		this.updatePortStatus(false);
 
 		return closed;
@@ -258,6 +285,7 @@ export class SerialMonitor implements vscode.Disposable {
 		if (port) {
 			dc.port = port;
 		}
+
 		this.currentPort = dc.port;
 
 		if (dc.port) {
@@ -270,13 +298,19 @@ export class SerialMonitor implements vscode.Disposable {
 	private updatePortStatus(isOpened: boolean) {
 		if (isOpened) {
 			this.openPortStatusBar.command = "arduino.closeSerialMonitor";
+
 			this.openPortStatusBar.text = `$(x)`;
+
 			this.openPortStatusBar.tooltip = "Close Serial Monitor";
+
 			this.timestampFormatStatusBar.show();
 		} else {
 			this.openPortStatusBar.command = "arduino.openSerialMonitor";
+
 			this.openPortStatusBar.text = `$(plug)`;
+
 			this.openPortStatusBar.tooltip = "Open Serial Monitor";
+
 			this.timestampFormatStatusBar.hide();
 		}
 	}

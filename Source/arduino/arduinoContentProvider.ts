@@ -17,6 +17,7 @@ export class ArduinoContentProvider
 	implements vscode.TextDocumentContentProvider
 {
 	private _webserver: LocalWebServer;
+
 	private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
 
 	constructor(private _extensionPath: string) {}
@@ -29,29 +30,34 @@ export class ArduinoContentProvider
 			"/boardmanager",
 			(req, res) => this.getHtmlView(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"show-packagemanager",
 			"/api/boardpackages",
 			async (req, res) => await this.getBoardPackages(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"install-board",
 			"/api/installboard",
 			async (req, res) => await this.installPackage(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"uninstall-board",
 			"/api/uninstallboard",
 			async (req, res) => await this.uninstallPackage(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"open-link",
 			"/api/openlink",
 			async (req, res) => await this.openLink(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"open-settings",
 			"/api/opensettings",
@@ -65,23 +71,27 @@ export class ArduinoContentProvider
 			"/librarymanager",
 			(req, res) => this.getHtmlView(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"load-libraries",
 			"/api/libraries",
 			async (req, res) => await this.getLibraries(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"install-library",
 			"/api/installlibrary",
 			async (req, res) => await this.installLibrary(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"uninstall-library",
 			"/api/uninstalllibrary",
 			async (req, res) => await this.uninstallLibrary(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"add-libpath",
 			"/api/addlibpath",
@@ -95,28 +105,33 @@ export class ArduinoContentProvider
 			"/boardconfig",
 			(req, res) => this.getHtmlView(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"load-installedboards",
 			"/api/installedboards",
 			(req, res) => this.getInstalledBoards(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"load-configitems",
 			"/api/configitems",
 			async (req, res) => await this.getBoardConfig(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"update-selectedboard",
 			"/api/updateselectedboard",
 			(req, res) => this.updateSelectedBoard(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"update-config",
 			"/api/updateconfig",
 			async (req, res) => await this.updateConfig(req, res),
 			true,
 		);
+
 		this.addHandlerWithLogger(
 			"run-command",
 			"/api/runcommand",
@@ -130,11 +145,13 @@ export class ArduinoContentProvider
 			"/examples",
 			(req, res) => this.getHtmlView(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"load-examples",
 			"/api/examples",
 			async (req, res) => await this.getExamples(req, res),
 		);
+
 		this.addHandlerWithLogger(
 			"open-example",
 			"/api/openexample",
@@ -149,6 +166,7 @@ export class ArduinoContentProvider
 		if (!ArduinoContext.initialized) {
 			await ArduinoActivator.activate();
 		}
+
 		let type = "";
 
 		if (uri.toString() === Constants.BOARD_MANAGER_URI.toString()) {
@@ -427,10 +445,12 @@ export class ArduinoContentProvider
 
 	public async getInstalledBoards(req, res) {
 		const installedBoards = [];
+
 		ArduinoContext.boardManager.installedBoards.forEach((b) => {
 			const isSelected = ArduinoContext.boardManager.currentBoard
 				? b.key === ArduinoContext.boardManager.currentBoard.key
 				: false;
+
 			installedBoards.push({
 				key: b.key,
 				name: b.name,
@@ -461,6 +481,7 @@ export class ArduinoContentProvider
 				const bd = ArduinoContext.boardManager.installedBoards.get(
 					req.body.boardId,
 				);
+
 				ArduinoContext.boardManager.doChangeBoardType(bd);
 
 				return res.json({
@@ -487,6 +508,7 @@ export class ArduinoContentProvider
 				);
 
 				const dc = DeviceContext.getInstance();
+
 				dc.configuration =
 					ArduinoContext.boardManager.currentBoard.customConfig;
 
@@ -551,9 +573,11 @@ export class ArduinoContentProvider
 				// Removal requirement for GDPR
 				if ("install-board" === handlerName) {
 					const packageNameKey = "packageName";
+
 					delete properties[packageNameKey];
 				}
 			}
+
 			Logger.traceUserData(`start-` + handlerName, {
 				correlationId: guid,
 				...properties,
@@ -570,6 +594,7 @@ export class ArduinoContentProvider
 					...properties,
 				});
 			}
+
 			Logger.traceUserData(`end-` + handlerName, {
 				correlationId: guid,
 				duration: timer1.end(),

@@ -37,6 +37,7 @@ export default function libraryManagerReducer(state = initalState, action) {
 					? element.versions.sort(versionCompare).reverse()
 					: element.versions;
 			}
+
 			return {
 				...state,
 				libraries: action.libraries,
@@ -46,6 +47,7 @@ export default function libraryManagerReducer(state = initalState, action) {
 				errorMessage: "",
 			};
 		}
+
 		case actions.LIBRARIES_FAILURE:
 			return {
 				...state,

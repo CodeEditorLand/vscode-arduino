@@ -47,11 +47,15 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 				ArduinoWorkspace.rootPath,
 				constants.CPP_CONFIG_FILE,
 			);
+
 			this._watcher = vscode.workspace.createFileSystemWatcher(
 				this._cppConfigFile,
 			);
+
 			this._watcher.onDidCreate(() => this.updateLibList());
+
 			this._watcher.onDidChange(() => this.updateLibList());
+
 			this._watcher.onDidDelete(() => this.updateLibList());
 		}
 	}
@@ -63,11 +67,14 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		if (VscodeSettings.getInstance().skipHeaderProvider) {
 			return [];
 		}
+
 		if (!ArduinoContext.initialized) {
 			await ArduinoActivator.activate();
 		}
+
 		if (!this._activated) {
 			this._activated = true;
+
 			this.updateLibList();
 		}
 		// Check if we are currently inside an include statement.
@@ -79,6 +86,7 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 
 		if (match) {
 			const result = [];
+
 			this._headerFiles.forEach((headerFile) => {
 				result.push(
 					new vscode.CompletionItem(
@@ -96,7 +104,9 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		if (!this._activated) {
 			return;
 		}
+
 		this._libPaths.clear();
+
 		this._headerFiles.clear();
 
 		if (fs.existsSync(this._cppConfigFile)) {
@@ -112,6 +122,7 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 						this._libPaths.add(path.normalize(appFolder));
 					}
 				}
+
 				if (deviceConfig.configurations) {
 					deviceConfig.configurations.forEach((configSection) => {
 						if (
@@ -137,7 +148,9 @@ export class CompletionProvider implements vscode.CompletionItemProvider {
 		if (!util.directoryExistsSync(libPath)) {
 			return;
 		}
+
 		const subItems = fs.readdirSync(libPath);
+
 		subItems.forEach((item) => {
 			try {
 				const state = fs.statSync(path.join(libPath, item));

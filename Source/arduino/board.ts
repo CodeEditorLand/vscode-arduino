@@ -39,8 +39,10 @@ export function parseBoardDescriptor(
 
 			if (!boardObject) {
 				boardObject = new Board(match[1], plat, menuMap);
+
 				result.set(boardObject.board, boardObject);
 			}
+
 			if (match[2] === "name") {
 				boardObject.name = match[3].trim();
 			} else {
@@ -87,6 +89,7 @@ export class Board implements IBoard {
 				if (!existingItem.selectedOption) {
 					existingItem.selectedOption = match[2];
 				}
+
 				const existingOption = existingItem.options.find(
 					(opt) => opt.id === match[2],
 				);
@@ -107,6 +110,7 @@ export class Board implements IBoard {
 			}
 		}
 	}
+
 	public getBuildConfig() {
 		return `${this.getPackageName()}:${this.platform.architecture}:${this.board}${this.customConfig ? ":" + this.customConfig : ""}`;
 	}
@@ -140,6 +144,7 @@ export class Board implements IBoard {
 
 			return BoardConfigResult.Success;
 		}
+
 		const configSections = configString.split(",");
 
 		const keyValueRegex = /(\S+)=(\S+)/;
@@ -152,6 +157,7 @@ export class Board implements IBoard {
 			if (!match) {
 				return BoardConfigResult.InvalidFormat;
 			}
+
 			const r = this.updateConfig(match[1], match[2]);
 
 			switch (r) {
@@ -167,6 +173,7 @@ export class Board implements IBoard {
 					return r;
 			}
 		}
+
 		return result;
 	}
 
@@ -191,9 +198,11 @@ export class Board implements IBoard {
 
 					return BoardConfigResult.Success;
 				}
+
 				return BoardConfigResult.SuccessNoChange;
 			}
 		}
+
 		return BoardConfigResult.InvalidOptionID;
 	}
 
@@ -222,5 +231,6 @@ export function boardEqual(a: IBoard | undefined, b: IBoard | undefined) {
 	} else if (a || b) {
 		return false;
 	}
+
 	return true;
 }

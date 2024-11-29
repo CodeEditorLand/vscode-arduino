@@ -28,6 +28,7 @@ class Setting<T> {
 
 	constructor(defaultValue?: T) {
 		this.default = defaultValue;
+
 		this._value = this.default;
 	}
 	/**
@@ -38,7 +39,9 @@ class Setting<T> {
 	public set value(value: T | undefined) {
 		if (value !== this._value) {
 			this._value = value;
+
 			this._modified = true;
+
 			this._emitter.fire(this._value);
 		}
 	}
@@ -95,6 +98,7 @@ class StrSetting extends Setting<string> {
 		} else {
 			value = value.trim();
 		}
+
 		super.value = value;
 	}
 }
@@ -103,23 +107,27 @@ class BuildPrefSetting extends Setting<string[][]> {
 	public get value() {
 		return super.value;
 	}
+
 	public set value(value: string[][]) {
 		if (!Array.isArray(value)) {
 			super.value = super.default;
 
 			return;
 		}
+
 		if (value.length <= 0) {
 			super.value = super.default;
 
 			return;
 		}
+
 		for (const pref of value) {
 			if (!Array.isArray(pref) || pref.length !== 2) {
 				super.value = super.default;
 
 				return;
 			}
+
 			for (const i of pref) {
 				if (typeof i !== "string") {
 					super.value = super.default;
@@ -128,6 +136,7 @@ class BuildPrefSetting extends Setting<string[][]> {
 				}
 			}
 		}
+
 		super.value = value;
 	}
 }
@@ -138,14 +147,23 @@ class BuildPrefSetting extends Setting<string[][]> {
  */
 export class DeviceSettings {
 	public port = new StrSetting();
+
 	public board = new StrSetting();
+
 	public sketch = new StrSetting();
+
 	public output = new StrSetting();
+
 	public intelliSenseGen = new StrSetting();
+
 	public configuration = new StrSetting();
+
 	public prebuild = new StrSetting();
+
 	public postbuild = new StrSetting();
+
 	public programmer = new StrSetting();
+
 	public buildPreferences = new BuildPrefSetting();
 
 	/**
@@ -171,14 +189,23 @@ export class DeviceSettings {
 	 */
 	public commit() {
 		this.port.commit();
+
 		this.board.commit();
+
 		this.sketch.commit();
+
 		this.output.commit();
+
 		this.intelliSenseGen.commit();
+
 		this.configuration.commit();
+
 		this.prebuild.commit();
+
 		this.postbuild.commit();
+
 		this.programmer.commit();
+
 		this.buildPreferences.commit();
 	}
 	/**
@@ -188,14 +215,23 @@ export class DeviceSettings {
 	 */
 	public reset(commit: boolean = true) {
 		this.port.reset();
+
 		this.board.reset();
+
 		this.sketch.reset();
+
 		this.output.reset();
+
 		this.intelliSenseGen.reset();
+
 		this.configuration.reset();
+
 		this.prebuild.reset();
+
 		this.postbuild.reset();
+
 		this.programmer.reset();
+
 		this.buildPreferences.reset();
 
 		if (commit) {
@@ -215,19 +251,29 @@ export class DeviceSettings {
 
 		if (settings) {
 			this.port.value = settings.port;
+
 			this.board.value = settings.board;
+
 			this.sketch.value = settings.sketch;
+
 			this.configuration.value = settings.configuration;
+
 			this.output.value = settings.output;
+
 			this.intelliSenseGen.value = settings.intelliSenseGen;
+
 			this.prebuild.value = settings.prebuild;
+
 			this.postbuild.value = settings.postbuild;
+
 			this.programmer.value = settings.programmer;
+
 			this.buildPreferences.value = settings.buildPreferences;
 
 			if (commit) {
 				this.commit();
 			}
+
 			return true;
 		} else {
 			logger.notifyUserError(
@@ -257,6 +303,7 @@ export class DeviceSettings {
 		if (util.fileExistsSync(file)) {
 			settings = util.tryParseJSON(fs.readFileSync(file, "utf8"));
 		}
+
 		if (!settings) {
 			logger.notifyUserError(
 				"arduinoFileError",
@@ -281,6 +328,7 @@ export class DeviceSettings {
 		settings.programmer = this.programmer.value;
 
 		util.mkdirRecursivelySync(path.dirname(file));
+
 		fs.writeFileSync(file, JSON.stringify(settings, undefined, 4));
 
 		this.commit();

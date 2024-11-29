@@ -67,10 +67,13 @@ export function showDeprecatedPopup(): void {
 
 export async function activate(context: vscode.ExtensionContext) {
 	showDeprecatedPopup();
+
 	Logger.configure(context);
+
 	arduinoActivatorModule.default.context = context;
 
 	const activeGuid = uuidModule().replace(/-/g, "");
+
 	Logger.traceUserData("start-activate-extension", {
 		correlationId: activeGuid,
 	});
@@ -94,10 +97,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			);
 		}
 	}
+
 	const vscodeSettings = VscodeSettings.getInstance();
 
 	const deviceContext = DeviceContext.getInstance();
+
 	deviceContext.extensionPath = context.extensionPath;
+
 	context.subscriptions.push(deviceContext);
 
 	const commandExecution = async (
@@ -109,6 +115,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		showDeprecatedPopup();
 
 		const guid = uuidModule().replace(/-/g, "");
+
 		Logger.traceUserData(`start-command-` + command, {
 			correlationId: guid,
 		});
@@ -123,6 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (result) {
 				result = await Promise.resolve(result);
 			}
+
 			if (result && result.telemetry) {
 				telemetryResult = result;
 			} else if (getUserData) {
@@ -228,6 +236,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				if (!SerialMonitor.getInstance().initialized) {
 					SerialMonitor.getInstance().initialize(context);
 				}
+
 				await commandExecution(command, commandBody, args, getUserData);
 			}),
 		);
@@ -345,8 +354,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				ArduinoWorkspace.rootPath,
 				path.resolve(ArduinoWorkspace.rootPath, deviceContext.output),
 			);
+
 			excludePatterns.push(`${outputPath}/**`);
 		}
+
 		const excludePattern = `{${excludePatterns.map((p) => p.replace("\\", "/")).join(",")}}`;
 
 		const fileUris = await vscode.workspace.findFiles(
@@ -367,6 +378,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 
 		deviceContext.sketch = newSketchFileName.label;
+
 		deviceContext.showStatusBar();
 	});
 
@@ -474,11 +486,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	registerArduinoCommand("arduino.openExample", (path) =>
 		arduinoContextModule.default.arduinoApp.openExample(path),
 	);
+
 	registerArduinoCommand(
 		"arduino.loadPackages",
 		async () =>
 			await arduinoContextModule.default.boardManager.loadPackages(true),
 	);
+
 	registerArduinoCommand(
 		"arduino.installBoard",
 		async (packageName, arch, version: string = "") => {
@@ -486,6 +500,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			const installedBoards =
 				arduinoContextModule.default.boardManager.installedBoards;
+
 			installedBoards.forEach((board: IBoard, key: string) => {
 				let _packageName: string;
 
@@ -508,34 +523,42 @@ export async function activate(context: vscode.ExtensionContext) {
 				await arduinoContextModule.default.boardManager.loadPackages(
 					true,
 				);
+
 				await arduinoContextModule.default.arduinoApp.installBoard(
 					packageName,
 					arch,
 					version,
 				);
 			}
+
 			return;
 		},
 	);
 
 	// serial monitor commands
 	const serialMonitor = SerialMonitor.getInstance();
+
 	context.subscriptions.push(serialMonitor);
+
 	registerNonArduinoCommand("arduino.selectSerialPort", () =>
 		serialMonitor.selectSerialPort(),
 	);
+
 	registerNonArduinoCommand("arduino.openSerialMonitor", () =>
 		serialMonitor.openSerialMonitor(),
 	);
+
 	registerNonArduinoCommand("arduino.changeTimestampFormat", () =>
 		serialMonitor.changeTimestampFormat(),
 	);
+
 	registerNonArduinoCommand("arduino.closeSerialMonitor", (port) =>
 		serialMonitor.closeSerialMonitor(port),
 	);
 
 	const completionProvider =
 		new completionProviderModule.CompletionProvider();
+
 	context.subscriptions.push(
 		vscode.languages.registerCompletionItemProvider(
 			ARDUINO_MODE,
@@ -561,6 +584,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!SerialMonitor.getInstance().initialized) {
 				SerialMonitor.getInstance().initialize(context);
 			}
+
 			vscode.commands.executeCommand(
 				"setContext",
 				"vscode-arduino:showExampleExplorer",
@@ -568,6 +592,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			);
 		})();
 	}
+
 	vscode.window.onDidChangeActiveTextEditor(async () => {
 		const activeEditor = vscode.window.activeTextEditor;
 
@@ -582,9 +607,11 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!arduinoContextModule.default.initialized) {
 				await arduinoActivatorModule.default.activate();
 			}
+
 			if (!SerialMonitor.getInstance().initialized) {
 				SerialMonitor.getInstance().initialize(context);
 			}
+
 			vscode.commands.executeCommand(
 				"setContext",
 				"vscode-arduino:showExampleExplorer",
@@ -599,10 +626,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidOpenTextDocument(async (document) => {
 			if (/\.pde$/.test(document.uri.fsPath)) {
 				const newFsName = document.uri.fsPath.replace(/\.pde$/, ".ino");
+
 				await vscode.commands.executeCommand(
 					"workbench.action.closeActiveEditor",
 				);
+
 				fs.renameSync(document.uri.fsPath, newFsName);
+
 				await vscode.commands.executeCommand(
 					"vscode.open",
 					vscode.Uri.file(newFsName),
@@ -614,14 +644,18 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!editor) {
 				return;
 			}
+
 			const document = editor.document;
 
 			if (/\.pde$/.test(document.uri.fsPath)) {
 				const newFsName = document.uri.fsPath.replace(/\.pde$/, ".ino");
+
 				await vscode.commands.executeCommand(
 					"workbench.action.closeActiveEditor",
 				);
+
 				fs.renameSync(document.uri.fsPath, newFsName);
+
 				await vscode.commands.executeCommand(
 					"vscode.open",
 					vscode.Uri.file(newFsName),
@@ -629,6 +663,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 		});
 	}
+
 	Logger.traceUserData("end-activate-extension", {
 		correlationId: activeGuid,
 	});
@@ -638,6 +673,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			new arduinoContentProviderModule.ArduinoContentProvider(
 				context.extensionPath,
 			);
+
 		await arduinoManagerProvider.initialize();
 
 		context.subscriptions.push(
@@ -646,6 +682,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				arduinoManagerProvider,
 			),
 		);
+
 		registerArduinoCommand("arduino.showBoardManager", async () => {
 			const panel = vscode.window.createWebviewPanel(
 				"arduinoBoardManager",
@@ -656,11 +693,13 @@ export async function activate(context: vscode.ExtensionContext) {
 					retainContextWhenHidden: true,
 				},
 			);
+
 			panel.webview.html =
 				await arduinoManagerProvider.provideTextDocumentContent(
 					BOARD_MANAGER_URI,
 				);
 		});
+
 		registerArduinoCommand("arduino.showLibraryManager", async () => {
 			const panel = vscode.window.createWebviewPanel(
 				"arduinoLibraryManager",
@@ -671,11 +710,13 @@ export async function activate(context: vscode.ExtensionContext) {
 					retainContextWhenHidden: true,
 				},
 			);
+
 			panel.webview.html =
 				await arduinoManagerProvider.provideTextDocumentContent(
 					LIBRARY_MANAGER_URI,
 				);
 		});
+
 		registerArduinoCommand("arduino.showBoardConfig", async () => {
 			const panel = vscode.window.createWebviewPanel(
 				"arduinoBoardConfiguration",
@@ -686,11 +727,13 @@ export async function activate(context: vscode.ExtensionContext) {
 					retainContextWhenHidden: true,
 				},
 			);
+
 			panel.webview.html =
 				await arduinoManagerProvider.provideTextDocumentContent(
 					BOARD_CONFIG_URI,
 				);
 		});
+
 		registerArduinoCommand(
 			"arduino.showExamples",
 			async (forceRefresh: boolean = false) => {
@@ -703,6 +746,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				if (forceRefresh) {
 					vscode.commands.executeCommand("arduino.reloadExample");
 				}
+
 				const panel = vscode.window.createWebviewPanel(
 					"arduinoExamples",
 					"Arduino Examples",
@@ -712,6 +756,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						retainContextWhenHidden: true,
 					},
 				);
+
 				panel.webview.html =
 					await arduinoManagerProvider.provideTextDocumentContent(
 						EXAMPLES_URI,
@@ -727,7 +772,9 @@ export async function activate(context: vscode.ExtensionContext) {
 				} catch (exception) {
 					Logger.error(exception.message);
 				}
+
 				arduinoManagerProvider.update(LIBRARY_MANAGER_URI);
+
 				arduinoManagerProvider.update(EXAMPLES_URI);
 			},
 			() => {
@@ -737,6 +784,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				};
 			},
 		);
+
 		registerArduinoCommand(
 			"arduino.reloadExample",
 			() => {
@@ -758,13 +806,17 @@ export async function activate(context: vscode.ExtensionContext) {
 	setTimeout(() => {
 		// delay to detect usb
 		usbDetectorModule.UsbDetector.getInstance().initialize(context);
+
 		usbDetectorModule.UsbDetector.getInstance().startListening();
 	}, 200);
 }
 
 export async function deactivate() {
 	const monitor = SerialMonitor.getInstance();
+
 	await monitor.closeSerialMonitor(null);
+
 	usbDetectorModule.UsbDetector.getInstance().stopListening();
+
 	Logger.traceUserData("deactivate-extension");
 }

@@ -89,6 +89,7 @@ function traceErrorOrWarning(
 			);
 		}
 	}
+
 	winston.log(level, message, {
 		...metadata,
 		message: error.message,

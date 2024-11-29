@@ -13,6 +13,7 @@ import { VscodeSettings } from "./vscodeSettings";
 
 export interface ICoCoPaContext {
 	callback: (s: string) => void;
+
 	conclude: () => Promise<void>;
 }
 
@@ -25,6 +26,7 @@ export function isCompilerParserEnabled(dc?: DeviceContext) {
 	if (!dc) {
 		dc = DeviceContext.getInstance();
 	}
+
 	const globalDisable =
 		VscodeSettings.getInstance().disableIntelliSenseAutoGen;
 
@@ -132,7 +134,9 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 			);
 
 			const prop = new ccp.CCppProperties();
+
 			prop.read(pPath);
+
 			prop.merge(content, ccp.CCppPropertiesMergeMode.ReplaceSameNames);
 
 			if (prop.write(pPath)) {
@@ -146,6 +150,7 @@ export function makeCompilerParserContext(dc: DeviceContext): ICoCoPaContext {
 			}
 		} catch (e) {
 			const estr = JSON.stringify(e);
+
 			arduinoChannel.error(
 				`Failed to read or write IntelliSense configuration: ${estr}`,
 			);
@@ -267,7 +272,9 @@ export class AnalysisManager {
 		waitPeriodMs: number = 1000,
 	) {
 		this._isBuilding = isBuilding;
+
 		this._doBuild = doBuild;
+
 		this._waitPeriodMs = waitPeriodMs;
 	}
 
@@ -292,8 +299,10 @@ export class AnalysisManager {
 			case AnalysisState.Idle:
 				if (event === AnalysisEvent.AnalysisRequest) {
 					this._state = AnalysisState.Waiting;
+
 					this.startWaitTimeout();
 				}
+
 				break;
 
 			case AnalysisState.Waiting:
@@ -307,9 +316,11 @@ export class AnalysisManager {
 					} else {
 						// no other build in progress -> launch analysis
 						this._state = AnalysisState.Analyzing;
+
 						await this.startAnalysis();
 					}
 				}
+
 				break;
 
 			case AnalysisState.Analyzing:
@@ -318,6 +329,7 @@ export class AnalysisManager {
 				} else if (event === AnalysisEvent.AnalysisRequest) {
 					this._state = AnalysisState.AnalyzingWaiting;
 				}
+
 				break;
 
 			case AnalysisState.AnalyzingWaiting:
@@ -327,8 +339,10 @@ export class AnalysisManager {
 					// timeout - event driven analysis is not time-
 					// critical)
 					this._state = AnalysisState.Idle;
+
 					await this.update(AnalysisEvent.AnalysisRequest);
 				}
+
 				break;
 		}
 	}
@@ -342,10 +356,12 @@ export class AnalysisManager {
 		if (this._timer) {
 			clearTimeout(this._timer);
 		}
+
 		this._timer = setTimeout(() => {
 			// reset timer variable first - calling update can cause
 			// the timer to be restarted.
 			this._timer = undefined;
+
 			this.update(AnalysisEvent.WaitTimeout);
 		}, this._waitPeriodMs);
 	}

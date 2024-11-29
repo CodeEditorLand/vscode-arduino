@@ -109,14 +109,20 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 			);
 
 			this._watcher.onDidCreate(() => this.loadContext());
+
 			this._watcher.onDidChange(() => this.loadContext());
+
 			this._watcher.onDidDelete(() => this.loadContext());
+
 			this._vscodeWatcher.onDidDelete(() => this.loadContext());
+
 			this._sketchStatusBar = vscode.window.createStatusBarItem(
 				vscode.StatusBarAlignment.Right,
 				constants.statusBarPriority.SKETCH,
 			);
+
 			this._sketchStatusBar.command = "arduino.selectSketch";
+
 			this._sketchStatusBar.tooltip = "Sketch File";
 		}
 	}
@@ -125,6 +131,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 		if (this._watcher) {
 			this._watcher.dispose();
 		}
+
 		if (this._vscodeWatcher) {
 			this._vscodeWatcher.dispose();
 		}
@@ -162,6 +169,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 					// No configuration file found, starting over with defaults
 					this._settings.reset();
 				}
+
 				return this;
 			},
 			(reason) => {
@@ -182,34 +190,44 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 		if (!this._settings.sketch.value) {
 			return false;
 		}
+
 		this._sketchStatusBar.text = this._settings.sketch.value;
+
 		this._sketchStatusBar.show();
 	}
 
 	public get onChangePort() {
 		return this._settings.port.emitter.event;
 	}
+
 	public get onChangeBoard() {
 		return this._settings.board.emitter.event;
 	}
+
 	public get onChangeSketch() {
 		return this._settings.sketch.emitter.event;
 	}
+
 	public get onChangeOutput() {
 		return this._settings.output.emitter.event;
 	}
+
 	public get onChangeISAutoGen() {
 		return this._settings.intelliSenseGen.emitter.event;
 	}
+
 	public get onChangeConfiguration() {
 		return this._settings.configuration.emitter.event;
 	}
+
 	public get onChangePrebuild() {
 		return this._settings.prebuild.emitter.event;
 	}
+
 	public get onChangePostbuild() {
 		return this._settings.postbuild.emitter.event;
 	}
+
 	public get onChangeProgrammer() {
 		return this._settings.programmer.emitter.event;
 	}
@@ -220,6 +238,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set port(value: string) {
 		this._settings.port.value = value;
+
 		this.saveContext();
 	}
 
@@ -229,6 +248,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set board(value: string) {
 		this._settings.board.value = value;
+
 		this.saveContext();
 	}
 
@@ -238,6 +258,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set sketch(value: string) {
 		this._settings.sketch.value = value;
+
 		this.saveContext();
 	}
 
@@ -255,6 +276,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set output(value: string) {
 		this._settings.output.value = value;
+
 		this.saveContext();
 	}
 
@@ -264,6 +286,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set intelliSenseGen(value: string) {
 		this._settings.intelliSenseGen.value = value;
+
 		this.saveContext();
 	}
 
@@ -273,6 +296,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set configuration(value: string) {
 		this._settings.configuration.value = value;
+
 		this.saveContext();
 	}
 
@@ -282,6 +306,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 	public set programmer(value: string) {
 		this._settings.programmer.value = value;
+
 		this.saveContext();
 	}
 
@@ -317,10 +342,12 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 
 				return;
 			}
+
 			await this.resolveMainSketch();
 
 			if (this.sketch) {
 				await vscode.commands.executeCommand("arduino.changeBoardType");
+
 				vscode.window.showInformationMessage(
 					"The workspace is initialized with the Arduino extension support.",
 				);
@@ -358,6 +385,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 							}
 						},
 					});
+
 					newSketchFileName =
 						(newSketchFileName && newSketchFileName.trim()) || "";
 
@@ -369,6 +397,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 								"sample.ino",
 							),
 						);
+
 						fs.writeFileSync(
 							path.join(
 								ArduinoWorkspace.rootPath,
@@ -376,6 +405,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 							),
 							snippets,
 						);
+
 						this.sketch = newSketchFileName;
 						// Set a build directory in new configurations to avoid warnings about slow builds.
 						this.output = "build";
@@ -387,6 +417,7 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 									newSketchFileName,
 								),
 							);
+
 						vscode.window.showTextDocument(
 							textDocument,
 							vscode.ViewColumn.One,
@@ -429,10 +460,12 @@ export class DeviceContext implements IDeviceContext, vscode.Disposable {
 		if (!ArduinoWorkspace.rootPath) {
 			return;
 		}
+
 		const deviceConfigFile = path.join(
 			ArduinoWorkspace.rootPath,
 			ARDUINO_CONFIG_FILE,
 		);
+
 		this._settings.save(deviceConfigFile);
 	}
 }

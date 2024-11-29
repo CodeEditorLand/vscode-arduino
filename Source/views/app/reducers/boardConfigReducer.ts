@@ -24,6 +24,7 @@ export default function boardConfigReducer(state = initalState, action) {
 				installedBoards: action.installedBoards,
 			};
 		}
+
 		case actions.INSTALLED_BOARDS_FAILURE:
 			return {
 				...state,

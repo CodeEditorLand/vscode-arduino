@@ -25,6 +25,7 @@ export class UsbDetector {
 		if (!UsbDetector._instance) {
 			UsbDetector._instance = new UsbDetector();
 		}
+
 		return UsbDetector._instance;
 	}
 
@@ -42,6 +43,7 @@ export class UsbDetector {
 
 	public initialize(extensionContext: vscode.ExtensionContext) {
 		this._extensionRoot = extensionContext.extensionPath;
+
 		this._extensionContext = extensionContext;
 	}
 
@@ -52,6 +54,7 @@ export class UsbDetector {
 		if (os.platform() === "linux" || !enableUSBDetection) {
 			return;
 		}
+
 		this._usbDetector = require("usb-detection");
 
 		if (!this._usbDetector) {
@@ -74,12 +77,15 @@ export class UsbDetector {
 				if (!deviceDescriptor) {
 					return;
 				}
+
 				const boardKey = `${deviceDescriptor.package}:${deviceDescriptor.architecture}:${deviceDescriptor.id}`;
+
 				Logger.traceUserData("detected a board", { board: boardKey });
 
 				if (!ArduinoContext.initialized) {
 					await ArduinoActivator.activate();
 				}
+
 				if (!SerialMonitor.getInstance().initialized) {
 					SerialMonitor.getInstance().initialize(
 						this._extensionContext,
@@ -119,6 +125,7 @@ export class UsbDetector {
 								) {
 									return;
 								}
+
 								vscode.window
 									.showInformationMessage(
 										`Install board package for ${
@@ -143,14 +150,17 @@ export class UsbDetector {
 															deviceDescriptor.indexFile,
 														);
 													}
+
 													ArduinoContext.boardManager.updateInstalledPlatforms(
 														deviceDescriptor.package,
 														deviceDescriptor.architecture,
 													);
+
 													bd =
 														ArduinoContext.boardManager.installedBoards.get(
 															boardKey,
 														);
+
 													this.switchBoard(
 														bd,
 														deviceDescriptor,
@@ -160,6 +170,7 @@ export class UsbDetector {
 											ignoreBoards.push(
 												deviceDescriptor.name,
 											);
+
 											VscodeSettings.getInstance().ignoreBoards =
 												ignoreBoards;
 										}
@@ -184,6 +195,7 @@ export class UsbDetector {
 							) {
 								return;
 							}
+
 							vscode.window
 								.showInformationMessage(
 									`Detected board ${deviceDescriptor.name}. Would you like to switch to this board type?`,
@@ -201,6 +213,7 @@ export class UsbDetector {
 										ignoreBoards.push(
 											deviceDescriptor.name,
 										);
+
 										VscodeSettings.getInstance().ignoreBoards =
 											ignoreBoards;
 									}
@@ -214,6 +227,7 @@ export class UsbDetector {
 				}
 			}
 		});
+
 		this._usbDetector.startMonitoring();
 	}
 
@@ -260,6 +274,7 @@ export class UsbDetector {
 					readme,
 				);
 			}
+
 			if (!readmeFilePath || !util.fileExistsSync(readmeFilePath)) {
 				readmeFilePath = path.join(
 					ArduinoContext.boardManager.currentBoard.platform
@@ -267,6 +282,7 @@ export class UsbDetector {
 					"README.md",
 				);
 			}
+
 			vscode.commands.executeCommand("arduino.showExamples", true);
 
 			if (util.fileExistsSync(readmeFilePath)) {
@@ -285,6 +301,7 @@ export class UsbDetector {
 							retainContextWhenHidden: true,
 						},
 					);
+
 					panel.webview.html = fs.readFileSync(
 						readmeFilePath,
 						"utf8",
@@ -308,15 +325,18 @@ export class UsbDetector {
 			);
 
 			const boardIndexes = JSON.parse(fileContent);
+
 			boardIndexes.forEach((boardIndex) => {
 				boardIndex.boards.forEach(
 					(board) => (board.indexFile = boardIndex.index_file),
 				);
+
 				this._boardDescriptors = this._boardDescriptors.concat(
 					boardIndex.boards,
 				);
 			});
 		}
+
 		return this._boardDescriptors.find((obj) => {
 			return (
 				obj.vid === vendorId &&

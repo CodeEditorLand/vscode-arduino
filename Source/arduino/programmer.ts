@@ -26,8 +26,10 @@ export function parseProgrammerDescriptor(
 
 			if (!programmer) {
 				programmer = new Programmer(match[1], plat);
+
 				result.set(programmer.name, programmer);
 			}
+
 			if (match[2] === "name") {
 				programmer.displayName = match[3].trim();
 			}

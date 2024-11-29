@@ -26,10 +26,12 @@ export async function resolveArduinoPath() {
 	if (directoryExistsSync(pathString)) {
 		return pathString;
 	}
+
 	try {
 		pathString = childProcess.execSync("where arduino", {
 			encoding: "utf8",
 		});
+
 		pathString = path.resolve(pathString).trim();
 
 		if (fileExistsSync(pathString)) {
@@ -72,5 +74,6 @@ export function findFile(fileName: string, cwd: string): string {
 	} catch (ex) {
 		// Ignore the errors.
 	}
+
 	return result;
 }

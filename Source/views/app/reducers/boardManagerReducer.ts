@@ -45,6 +45,7 @@ export default function boardManagerReducer(state = initalState, action) {
 				),
 			};
 		}
+
 		case actions.BOARD_PACKAGES_FAILURE:
 			return {
 				...state,

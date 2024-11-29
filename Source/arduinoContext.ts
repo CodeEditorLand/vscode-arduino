@@ -32,6 +32,7 @@ class ArduinoContext {
 	//  within a constructor they are "undefined" by default.
 	//  This makes comparing against null (above) superfluous.
 	private _arduinoApp: ArduinoApp = null;
+
 	private _boardManager: BoardManager = null;
 }
 

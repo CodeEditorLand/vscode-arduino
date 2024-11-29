@@ -10,6 +10,7 @@ export class ProgrammerManager {
 	public static notFoundDisplayValue: string = "<Select Programmer>";
 
 	private _programmerValue: string;
+
 	private _programmerDisplayName: string;
 
 	private _programmerStatusBar: vscode.StatusBarItem;
@@ -22,10 +23,15 @@ export class ProgrammerManager {
 			vscode.StatusBarAlignment.Right,
 			constants.statusBarPriority.PROGRAMMER,
 		);
+
 		this._programmerStatusBar.command = "arduino.selectProgrammer";
+
 		this._programmerStatusBar.tooltip = "Select Programmer";
+
 		this.setProgrammerValue(DeviceContext.getInstance().programmer);
+
 		this._programmerStatusBar.show();
+
 		DeviceContext.getInstance().onChangeProgrammer(() => {
 			this.setProgrammerValue(DeviceContext.getInstance().programmer);
 		});
@@ -62,6 +68,7 @@ export class ProgrammerManager {
 		}
 
 		this.setProgrammerValue(chosen.programmer.name);
+
 		DeviceContext.getInstance().programmer = this._programmerValue;
 	}
 
@@ -70,14 +77,17 @@ export class ProgrammerManager {
 			this._arduinoApp.boardManager.installedProgrammers.get(
 				programmerName,
 			);
+
 		this._programmerValue = this._settings.useArduinoCli
 			? programmerName
 			: programmer
 				? programmer.key
 				: programmerName;
+
 		this._programmerDisplayName = this._programmerValue
 			? this.getDisplayName(programmerName)
 			: ProgrammerManager.notFoundDisplayValue;
+
 		this._programmerStatusBar.text = this._programmerDisplayName;
 	}
 

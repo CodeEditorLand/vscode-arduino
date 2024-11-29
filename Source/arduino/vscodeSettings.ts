@@ -25,19 +25,33 @@ const configKeys = {
 
 export interface IVscodeSettings {
 	arduinoPath: string;
+
 	commandPath: string;
+
 	additionalUrls: string[];
+
 	logLevel: string;
+
 	clearOutputOnBuild: boolean;
+
 	allowPDEFiletype: boolean;
+
 	enableUSBDetection: boolean;
+
 	disableTestingOpen: boolean;
+
 	ignoreBoards: string[];
+
 	skipHeaderProvider: boolean;
+
 	useArduinoCli: boolean;
+
 	disableIntelliSenseAutoGen: boolean;
+
 	analyzeOnOpen: boolean;
+
 	analyzeOnSettingChange: boolean;
+
 	updateAdditionalUrls(urls: string[]): void;
 
 	setUseArduinoCli(value: boolean): Promise<void>;
@@ -52,10 +66,12 @@ export class VscodeSettings implements IVscodeSettings {
 		if (!VscodeSettings._instance) {
 			VscodeSettings._instance = new VscodeSettings();
 		}
+
 		return VscodeSettings._instance;
 	}
 
 	private static _instance: IVscodeSettings;
+
 	private constructor() {}
 
 	public get arduinoPath(): string {
@@ -165,6 +181,7 @@ export class VscodeSettings implements IVscodeSettings {
 
 	private async setConfigValue(key: string, value, global: boolean = true) {
 		const workspaceConfig = vscode.workspace.getConfiguration();
+
 		await workspaceConfig.update(key, value, global);
 	}
 }

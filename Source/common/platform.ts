@@ -30,5 +30,6 @@ export function getExecutableFileName(fileName: string): string {
 	if (isWindows) {
 		return `${fileName}.exe`;
 	}
+
 	return fileName;
 }
