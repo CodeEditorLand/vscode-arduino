@@ -318,7 +318,7 @@
 		"download": "8.0.0",
 		"fancy-log": "2.0.0",
 		"minimist": "1.2.8",
-		"node-gyp": "10.2.0",
+		"node-gyp": "10.3.1",
 		"plugin-error": "2.0.1",
 		"typemoq": "2.1.0"
 	},
