@@ -308,13 +308,13 @@
 		"properties": "1.2.1",
 		"strftime": "0.10.3",
 		"usb-detection": "4.14.2",
-		"uuid": "11.0.3",
+		"uuid": "11.0.4",
 		"winreg": "1.2.5",
 		"winston": "3.17.0"
 	},
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/node": "22.10.1",
+		"@types/node": "22.10.5",
 		"@types/strftime": "0.9.8",
 		"@types/uuid": "10.0.0",
 		"@types/winreg": "1.2.36",
