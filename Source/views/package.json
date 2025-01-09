@@ -9,7 +9,7 @@
 		"file-loader": "6.2.0",
 		"mini-css-extract-plugin": "2.9.2",
 		"node-sass": "9.0.0",
-		"rc-tree": "5.12.4",
+		"rc-tree": "5.13.0",
 		"sass-loader": "16.0.4",
 		"source-map-loader": "5.0.0",
 		"style-loader": "4.0.0",
