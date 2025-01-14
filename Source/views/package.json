@@ -14,7 +14,7 @@
 		"source-map-loader": "5.0.0",
 		"style-loader": "4.0.0",
 		"svg-url-loader": "8.0.0",
-		"ts-loader": "9.5.1"
+		"ts-loader": "9.5.2"
 	},
 	"overrides": {
 		"async": "3.2.3",
