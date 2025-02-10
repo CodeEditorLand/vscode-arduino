@@ -314,7 +314,7 @@
 	},
 	"devDependencies": {
 		"@types/glob": "8.1.0",
-		"@types/node": "22.13.0",
+		"@types/node": "22.13.1",
 		"@types/strftime": "0.9.8",
 		"@types/uuid": "10.0.0",
 		"@types/winreg": "1.2.36",
@@ -324,7 +324,7 @@
 		"download": "8.0.0",
 		"fancy-log": "2.0.0",
 		"minimist": "1.2.8",
-		"node-gyp": "11.0.0",
+		"node-gyp": "11.1.0",
 		"plugin-error": "2.0.1",
 		"typemoq": "2.1.0"
 	},
